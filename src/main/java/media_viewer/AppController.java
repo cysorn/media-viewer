@@ -92,6 +92,7 @@ public class AppController {
         hierarchies.add(level3List1); // Third level, if needed
 
         model.addAttribute("hierarchies", hierarchies);
+        //model.addAttribute("level1List", level1List);
     }
     
     
