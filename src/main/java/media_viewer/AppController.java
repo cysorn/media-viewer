@@ -67,25 +67,26 @@ public class AppController {
     }
     
     private void showTags(Model model) {
-        // Create example hierarchical data
-
         // Level 3 (deepest level) buttons
-        List<TagItem> level3List1 = Arrays.asList(new TagItem("Button 1.1.1"));
-
-        // Level 2 buttons
-        List<TagItem> level2List1 = Arrays.asList(new TagItem("Button 1.1", level3List1), new TagItem("Button 1.2"));
-
-        // Level 1 buttons
-        List<TagItem> level1List = Arrays.asList(
-            new TagItem("Button 1", level2List1),
-            new TagItem("Button 2", level2List1),
-            new TagItem("Button 3", level2List1)
+        List<TagItem> level3List1 = Arrays.asList(
+            new TagItem("Button 1.1.1")
         );
 
-        // Only one top-level list is needed
-        List<List<TagItem>> hierarchies = Arrays.asList(level1List);
+        // Level 2 buttons with nested level 3
+        List<TagItem> level2List1 = Arrays.asList(
+            new TagItem("Button 1.1", level3List1),
+            new TagItem("Button 1.2")
+        );
 
-        model.addAttribute("hierarchies", hierarchies);
+        // Level 1 buttons with nested level 2
+        List<TagItem> level1List = Arrays.asList(
+            new TagItem("Button 1", level2List1),
+            new TagItem("Button 2"),
+            new TagItem("Button 3")
+        );
+
+        // Pass the top-level list to the model
+        model.addAttribute("items", level1List);
     }
     
     

@@ -46,7 +46,7 @@
 	    <div class="section-header">Category</div>
 	    <div class="hierarchy">
 	        <!-- Pass the top-level list of hierarchies and initial depth (0) -->
-	        <div th:each="level : ${hierarchies}">
+	        <div th:each="level : ${items}">
 	            <div th:replace="(~{_recursiveHierarchy :: hierarchyFragment(${level}, 0)})"></div>
 				</div>
         	</div>
