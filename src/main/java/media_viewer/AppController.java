@@ -55,6 +55,8 @@ public class AppController {
                     .collect(Collectors.toList());
             Collections.sort(tags);
             
+            
+            showTags(model);
     	    model.addAttribute("mediaList", getUncategorizedFiles());
     	    model.addAttribute("imageFormats", imageFormats);
     	    model.addAttribute("videoFormats", videoFormats);
@@ -63,6 +65,36 @@ public class AppController {
  
     	    return "index";
     }
+    
+    private void showTags(Model model) {
+        // Create example hierarchical data
+        // Each level is a list of TagItem objects, where each TagItem can have its own subItems
+
+        // Level 3 (deepest level) buttons
+        List<TagItem> level3List1 = Arrays.asList(new TagItem("Button 1.1.1"));
+        List<TagItem> level3List2 = Arrays.asList(); // Empty for other branches
+
+        // Level 2 buttons
+        List<TagItem> level2List1 = Arrays.asList(new TagItem("Button 1.1", level3List1), new TagItem("Button 1.2"));
+        List<TagItem> level2List2 = Arrays.asList(new TagItem("Button 2.1", level3List2));
+
+        // Level 1 buttons
+        List<TagItem> level1List = Arrays.asList(
+            new TagItem("Button 1", level2List1),
+            new TagItem("Button 2", level2List2),
+            new TagItem("Button 3")
+        );
+
+        // Hierarchies as a list of lists
+        List<List<TagItem>> hierarchies = new ArrayList<>();
+        hierarchies.add(level1List); // Top level
+        hierarchies.add(level2List1); // Second level, if needed
+        hierarchies.add(level3List1); // Third level, if needed
+
+        model.addAttribute("hierarchies", hierarchies);
+    }
+    
+    
     
     private List<String> getUncategorizedFiles(){
    	    List<String> fileNames = new ArrayList<>();
@@ -109,5 +141,27 @@ public class AppController {
         */
         return "Hi";
         
+    }
+    
+    public static class TagItem {
+        private String name;
+        private List<TagItem> subItems;
+
+        public TagItem(String name) {
+            this.name = name;
+        }
+
+        public TagItem(String name, List<TagItem> subItems) {
+            this.name = name;
+            this.subItems = subItems;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<TagItem> getSubItems() {
+            return subItems;
+        }
     }
 }

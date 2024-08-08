@@ -1,0 +1,9 @@
+<!-- Recursive fragment -->
+<div th:fragment="hierarchyFragment(item)">
+    <button class="hierarchy-button" th:text="${item.name}"></button>
+    <div class="child-buttons" th:if="${item.subItems != null}">
+        <div th:each="subItem : ${item.subItems}">
+            <div th:replace="this :: hierarchyFragment(subItem)"></div>
+        </div>
+    </div>
+</div>

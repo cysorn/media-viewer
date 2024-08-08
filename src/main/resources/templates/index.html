@@ -44,22 +44,12 @@
     <div class="overlay"></div>
 
 	<div class="tags-management-container">
-		<div class="section-header">Category</div>
-        <div class="hierarchy">
-            <button class="hierarchy-button">Button 1</button>
-            <div class="child-buttons">
-                <button class="hierarchy-button">Button 1.1</button>
-                <div class="child-buttons">
-                    <button class="hierarchy-button">Button 1.1.1</button>
-                </div>
-                <button class="hierarchy-button">Button 1.2</button>
-            </div>
-            <button class="hierarchy-button">Button 2</button>
-            <div class="child-buttons">
-                <button class="hierarchy-button">Button 2.1</button>
-            </div>
-            <button class="hierarchy-button">Button 3</button>
-        </div>
+			<div class="section-header">Category</div>
+			<div class="hierarchy">
+			    <div th:each="item : ${level1List}">
+			        <div th:replace="_recursiveHierarchy :: hierarchyFragment(item)"></div>
+				</div>
+        	</div>
 		<div class="section-header">Tags</div>
         <div class="tags-section">
 			<div class="tags-section">
