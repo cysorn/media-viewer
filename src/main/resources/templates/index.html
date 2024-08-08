@@ -25,7 +25,6 @@
 	<div class="container">
 	        <!-- Loop through each media item in the list -->
 	        <div th:each="media : ${mediaList}">
-	            
 	            <!-- Check if the media is an image -->
 	            <div th:if="${#lists.contains(imageFormats, #strings.substring(media, media.lastIndexOf('.')))}">
 	                <img th:src="@{${media}}" alt="Image" width="150" height="150" />
@@ -48,7 +47,7 @@
 	    <div class="hierarchy">
 	        <!-- Pass the top-level list of hierarchies and initial depth (0) -->
 	        <div th:each="level : ${hierarchies}">
-	            <div th:replace="_recursiveHierarchy :: hierarchyFragment(${level}, 0)"></div>
+	            <div th:replace="(~{_recursiveHierarchy :: hierarchyFragment(${level}, 0)})"></div>
 				</div>
         	</div>
 		<div class="section-header">Tags</div>

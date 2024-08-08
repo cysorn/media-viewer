@@ -1,6 +1,22 @@
-<!-- Recursive fragment to handle a single level of buttons -->
+<!-- _recursiveHierarchy.html -->
 <div th:fragment="hierarchyFragment(items, depth)">
-    <div th:if="${depth < items.size()}">
+    <div th:if="${items != null and items.size() > 0}">
+        <div th:each="item, iterStat : ${items}">
+            <!-- Render the button for the current item -->
+            <button class="hierarchy-button" th:text="${item.name}"></button>
+
+            <!-- Render sub-items if they exist -->
+            <div class="child-buttons" th:if="${item.subItems != null}">
+                <!-- Recursively call the fragment with subItems -->
+                <div th:replace="~{_recursiveHierarchy :: hierarchyFragment(${item.subItems}, ${depth + 1})}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+		<!--
+		<p>Depth: <span th:text="${depth}"></span></p>
+		        <p>Items Size: <span th:text="${items.size()}"></span></p>
+		<!--
         <button class="hierarchy-button" th:text="${items.get(depth).name}"></button>
         <div class="child-buttons" th:if="${depth + 1 < items.size()}">
             <div th:each="subItem : ${items.get(depth).subItems}">
@@ -8,4 +24,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
