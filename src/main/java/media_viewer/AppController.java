@@ -37,7 +37,6 @@ public class AppController {
     		    ".tiff",  // Tagged Image File Format (limited support, mostly Safari)
     		    ".webp",  // WebP Image
     		    ".svg",   // Scalable Vector Graphics
-    		    ".ico",   // Icon Image
     		    ".jfif"   // JPEG File Interchange Format (essentially a variant of JPEG)
     		);
     	
@@ -67,6 +66,8 @@ public class AppController {
     }
     
     private void showTags(Model model) {
+    	
+    	/*
         // Level 3 (deepest level) buttons
         List<TagItem> level3List1 = Arrays.asList(
             new TagItem("Button 1.1.1")
@@ -86,7 +87,9 @@ public class AppController {
         );
 
         // Pass the top-level list to the model
-        model.addAttribute("items", level1List);
+        */
+    	List<TagItem> tagItems = sql.getTagHierarchy();
+        model.addAttribute("items", tagItems);
     }
     
     
@@ -136,28 +139,5 @@ public class AppController {
         */
         return "Hi";
         
-    }
-    
-    public static class TagItem {
-        private String name;
-        private List<TagItem> subItems;
-
-        public TagItem(String name) {
-            this.name = name;
-            subItems = new ArrayList<TagItem>();
-        }
-
-        public TagItem(String name, List<TagItem> subItems) {
-            this.name = name;
-            this.subItems = subItems;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public List<TagItem> getSubItems() {
-            return subItems;
-        }
     }
 }

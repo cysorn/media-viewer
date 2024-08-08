@@ -1,6 +1,9 @@
 package media_viewer;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class Sql {
@@ -240,8 +245,13 @@ public class Sql {
     }
     
     public List<String> getTags() {
-    	String checkSql = "SELECT tag FROM `a_tags`";
-    	return jdbcTemplate.query(checkSql, (rs, rowNum) -> rs.getString("tag"));
+    	String sql = "SELECT tag FROM `a_tags`";
+    	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag"));
+    }
+    
+    public List<String> getAllParentTags(){
+    	String sql = "SELECT t.tag FROM `a_tags` t LEFT JOIN `a_child_tags` ct ON t.id = ct.tag WHERE ct.tag IS NULL";
+    	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
     }
     /*
     //AI Version
@@ -298,4 +308,83 @@ public class Sql {
     	sql.append(") ENGINE = InnoDB;");
     	jdbcTemplate.update(sql.toString());
     }
-}
+
+
+	    public List<TagItem> getTagHierarchy() {
+	        // Query to get all tags and child tags
+	        String query = "SELECT t.id AS parentId, t.tag AS parentTag, ct.childTag AS childId, ct.childTag AS childTag " +
+	                       "FROM a_tags t LEFT JOIN a_child_tags ct ON t.id = ct.tag";
+	
+	        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
+	
+	        // Maps to store tags and their children
+	        Map<Integer, TagItem> tagMap = new HashMap<>();
+	        Map<Integer, List<TagItem>> childMap = new HashMap<>();
+	
+	        // Populate the maps
+	        for (TagItemRow row : rows) {
+	            int parentId = row.getParentId();
+	            String parentTag = row.getParentTag();
+	            Integer childId = row.getChildId();
+	            String childTag = row.getChildTag();
+	
+	            tagMap.putIfAbsent(parentId, new TagItem(parentTag));
+	            if (childId != null) {
+	                tagMap.putIfAbsent(childId, new TagItem(childTag));
+	                childMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(tagMap.get(childId));
+	            }
+	        }
+	
+	        // Build the hierarchical structure
+	        for (Map.Entry<Integer, List<TagItem>> entry : childMap.entrySet()) {
+	            TagItem parent = tagMap.get(entry.getKey());
+	            if (parent != null) {
+	                parent.getSubItems().addAll(entry.getValue());
+	            }
+	        }
+	
+	        // Return the root tags (tags with no parent)
+	        return new ArrayList<>(tagMap.values());
+	    }
+	
+	    private static class TagItemRow {
+	        private final int parentId;
+	        private final String parentTag;
+	        private final Integer childId;
+	        private final String childTag;
+	
+	        public TagItemRow(int parentId, String parentTag, Integer childId, String childTag) {
+	            this.parentId = parentId;
+	            this.parentTag = parentTag;
+	            this.childId = childId;
+	            this.childTag = childTag;
+	        }
+	
+	        public int getParentId() {
+	            return parentId;
+	        }
+	
+	        public String getParentTag() {
+	            return parentTag;
+	        }
+	
+	        public Integer getChildId() {
+	            return childId;
+	        }
+	
+	        public String getChildTag() {
+	            return childTag;
+	        }
+	    }
+	
+	    private static class TagItemRowMapper implements RowMapper<TagItemRow> {
+	        @Override
+	        public TagItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+	            int parentId = rs.getInt("parentId");
+	            String parentTag = rs.getString("parentTag");
+	            Integer childId = (rs.getObject("childId") != null) ? rs.getInt("childId") : null;
+	            String childTag = (rs.getObject("childTag") != null) ? rs.getString("childTag") : null;
+	            return new TagItemRow(parentId, parentTag, childId, childTag);
+	        }
+	    }
+	}
