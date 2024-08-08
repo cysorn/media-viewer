@@ -62,9 +62,9 @@
         </div>
 		<div class="section-header">Tags</div>
         <div class="tags-section">
-            <button class="tag-button">Tag 1</button>
-            <button class="tag-button">Tag 2</button>
-            <button class="tag-button">Tag 3</button>
+			<div class="tags-section">
+			    <button th:each="tag : ${tags}" class="tag-button" th:text="${tag}"></button>
+			</div>
         </div>
         <button id="confirmButton" class="confirm-button">Confirm</button>
     </div>

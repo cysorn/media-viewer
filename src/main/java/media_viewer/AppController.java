@@ -3,6 +3,7 @@ package media_viewer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +28,33 @@ public class AppController {
     public String func(Model model) {
 
 
-    	    List<String> imageFormats = Arrays.asList(".png", ".jpg", ".jpeg", ".gif");
-    	    List<String> videoFormats = Arrays.asList(".mp4", ".ogg", ".webm");
+    	List<String> imageFormats = Arrays.asList(
+    		    ".png",   // Portable Network Graphics
+    		    ".jpg",   // JPEG Image
+    		    ".jpeg",  // JPEG Image
+    		    ".gif",   // Graphics Interchange Format
+    		    ".bmp",   // Bitmap Image (limited support in some browsers)
+    		    ".tiff",  // Tagged Image File Format (limited support, mostly Safari)
+    		    ".webp",  // WebP Image
+    		    ".svg",   // Scalable Vector Graphics
+    		    ".ico",   // Icon Image
+    		    ".jfif"   // JPEG File Interchange Format (essentially a variant of JPEG)
+    		);
+    	
+    	List<String> videoFormats = Arrays.asList(
+    		    ".mp4",    // MPEG-4 Part 14
+    		    ".ogg",    // Ogg Theora
+    		    ".webm",   // WebM
+    		    ".mov",    // QuickTime (supported in some browsers, especially Safari)
+    		    ".m4v",    // MPEG-4 Video (similar to .mp4, but used mainly by Apple)
+    		    ".avi",    // AVI (supported in some browsers with limited compatibility)
+    		    ".3gp"     // 3GPP (supported in most modern browsers)
+    		);
     	    List<String> tags = sql.getTags().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
-
+            Collections.sort(tags);
+            
     	    model.addAttribute("mediaList", getUncategorizedFiles());
     	    model.addAttribute("imageFormats", imageFormats);
     	    model.addAttribute("videoFormats", videoFormats);
