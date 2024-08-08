@@ -49,7 +49,7 @@ public class AppController {
     		    ".avi",    // AVI (supported in some browsers with limited compatibility)
     		    ".3gp"     // 3GPP (supported in most modern browsers)
     		);
-    	    List<String> tags = sql.getTags().stream()
+    	    List<String> tags = sql.getTagsWithNoFamilyRelations().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);

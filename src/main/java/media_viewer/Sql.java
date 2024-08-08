@@ -250,7 +250,12 @@ public class Sql {
     }
     
     public List<String> getAllParentTags(){
-    	String sql = "SELECT t.tag FROM `a_tags` t LEFT JOIN `a_child_tags` ct ON t.id = ct.tag WHERE ct.tag IS NULL";
+    	String sql = "SELECT DISTINCT t.tag FROM `a_tags` t LEFT JOIN `a_child_tags` ct ON t.id = ct.tag WHERE ct.tag IS NOT NULL;";
+    	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
+    }
+    
+    public List<String> getTagsWithNoFamilyRelations(){
+    	String sql = "SELECT t.tag FROM `a_tags` t WHERE t.id NOT IN (SELECT tag FROM `a_child_tags`) AND t.id NOT IN (SELECT childTag FROM `a_child_tags`);";
     	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
     }
     /*
@@ -310,44 +315,46 @@ public class Sql {
     }
 
 
-	    public List<TagItem> getTagHierarchy() {
-	        // Query to get all tags and child tags
-	    	String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
-	                "FROM a_tags t1 " +
-	                "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
-	                "LEFT JOIN a_tags t2 ON ct.childTag = t2.id";
-	
-	        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
-	
-	        // Maps to store tags and their children
-	        Map<Integer, TagItem> tagMap = new HashMap<>();
-	        Map<Integer, List<TagItem>> childMap = new HashMap<>();
-	
-	        // Populate the maps
-	        for (TagItemRow row : rows) {
-	            int parentId = row.getParentId();
-	            String parentTag = row.getParentTag();
-	            Integer childId = row.getChildId();
-	            String childTag = row.getChildTag();
-	
-	            tagMap.putIfAbsent(parentId, new TagItem(parentTag));
-	            if (childId != null) {
-	                tagMap.putIfAbsent(childId, new TagItem(childTag));
-	                childMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(tagMap.get(childId));
-	            }
-	        }
-	
-	        // Build the hierarchical structure
-	        for (Map.Entry<Integer, List<TagItem>> entry : childMap.entrySet()) {
-	            TagItem parent = tagMap.get(entry.getKey());
-	            if (parent != null) {
-	                parent.getSubItems().addAll(entry.getValue());
-	            }
-	        }
-	
-	        // Return the root tags (tags with no parent)
-	        return new ArrayList<>(tagMap.values());
-	    }
+    public List<TagItem> getTagHierarchy() {
+        // Query to get all tags and child tags
+        String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
+                       "FROM a_tags t1 " +
+                       "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
+                       "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
+                       "WHERE ct.childTag IS NOT NULL";  // Only include tags that have children
+
+        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
+
+        // Maps to store tags and their children
+        Map<Integer, TagItem> tagMap = new HashMap<>();
+        Map<Integer, List<TagItem>> childMap = new HashMap<>();
+
+        // Populate the maps
+        for (TagItemRow row : rows) {
+            int parentId = row.getParentId();
+            String parentTag = row.getParentTag();
+            Integer childId = row.getChildId();
+            String childTag = row.getChildTag();
+
+            tagMap.putIfAbsent(parentId, new TagItem(parentTag));
+            if (childId != null) {
+                tagMap.putIfAbsent(childId, new TagItem(childTag));
+                childMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(tagMap.get(childId));
+            }
+        }
+
+        // Build the hierarchical structure
+        List<TagItem> result = new ArrayList<>();
+        for (Map.Entry<Integer, List<TagItem>> entry : childMap.entrySet()) {
+            TagItem parent = tagMap.get(entry.getKey());
+            if (parent != null) {
+                parent.getSubItems().addAll(entry.getValue());
+                result.add(parent);  // Only add parent tags that have children
+            }
+        }
+
+        return result;  // Return only parent tags with children
+    }
 	
 	    private static class TagItemRow {
 	        private final int parentId;
