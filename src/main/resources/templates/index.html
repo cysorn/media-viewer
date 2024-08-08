@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>Image and Video Overlay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top container with title -->
+    <div class="top-container">
+        <h1 class="top-title">Media-Viewer</h1>
+    </div>
+
+    <!-- Left container with search and tags -->
+    <div class="side-container">
+        <input type="text" class="search-bar" placeholder="Search...">
+        <div class="tags-title">Tags</div>
+        <div class="tags-list" id="tagsContainer">
+			<div th:each="tag : ${tags}" class="tag-item" style="font-size: 20px" th:text="${tag}"></div>
+        </div>
+    </div>
+	
+	
+
+	<div class="container">
+	        <!-- Loop through each media item in the list -->
+	        <div th:each="media : ${mediaList}">
+	            
+	            <!-- Check if the media is an image -->
+	            <div th:if="${#lists.contains(imageFormats, #strings.substring(media, media.lastIndexOf('.')))}">
+	                <img th:src="@{${media}}" alt="Image" width="150" height="150" />
+	            </div>
+
+	            <!-- Check if the media is a video -->
+	            <div th:if="${#lists.contains(videoFormats, #strings.substring(media, media.lastIndexOf('.')))}">
+	                <video width="150" height="150" controls>
+	                    <source th:src="@{${media}}" th:type="'video/' + ${#strings.substring(media, media.lastIndexOf('.') + 1)}">
+	                    Your browser does not support the video tag.
+	                </video>
+	            </div>
+
+	        </div>
+	    </div>
+    <div class="overlay"></div>
+
+	<div class="tags-management-container">
+		<div class="section-header">Category</div>
+        <div class="hierarchy">
+            <button class="hierarchy-button">Button 1</button>
+            <div class="child-buttons">
+                <button class="hierarchy-button">Button 1.1</button>
+                <div class="child-buttons">
+                    <button class="hierarchy-button">Button 1.1.1</button>
+                </div>
+                <button class="hierarchy-button">Button 1.2</button>
+            </div>
+            <button class="hierarchy-button">Button 2</button>
+            <div class="child-buttons">
+                <button class="hierarchy-button">Button 2.1</button>
+            </div>
+            <button class="hierarchy-button">Button 3</button>
+        </div>
+		<div class="section-header">Tags</div>
+        <div class="tags-section">
+            <button class="tag-button">Tag 1</button>
+            <button class="tag-button">Tag 2</button>
+            <button class="tag-button">Tag 3</button>
+        </div>
+        <button id="confirmButton" class="confirm-button">Confirm</button>
+    </div>
+
+    <!-- Arrow navigation buttons -->
+    <div id="prevArrow" class="arrow">&#10094;</div>
+    <div id="nextArrow" class="arrow">&#10095;</div>
+
+    <script src="script.js"></script>
+</body>
+</html>

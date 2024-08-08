@@ -1,0 +1,276 @@
+/* Reset default margins and paddings on body and html */
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+	overflow-y: hidden; /* Prevent vertical scrolling */
+    height: 100%;
+	user-select: none; /* Disables text selection */
+}
+
+/* The full-screen overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Gray background with transparency */
+    display: none; /* Hidden by default */
+    z-index: 9997; /* Higher than top and left divs but below fullscreen media */
+}
+
+/* Top container with title */
+.top-container {
+    width: 100%;
+    padding: 10px 20px;  /* Reduced padding to restore original height */
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Below the overlay */
+    box-sizing: border-box; /* Ensure padding is included in height */
+    height: 60px;  /* Restore the original height */
+}
+
+/* Left side container */
+.side-container {
+    position: fixed;
+    top: 60px; /* Adjusted to be below the top container, using its height */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 60px); /* Fill remaining height */
+    background-color: #f4f4f4; /* Light gray background */
+    padding: 20px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    z-index: 1000; /* Below the overlay */
+    box-sizing: border-box; /* Ensure padding is included in height */
+}
+
+.search-bar {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.tags-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tag-item {
+    padding: 10px;
+    background-color: #e0e0e0; /* Light gray background for tags */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tag-item:hover {
+    background-color: #d4d4d4; /* Slightly darker on hover */
+}
+
+.container {
+    margin-left: 280px; /* Adjust to make room for side container */
+    padding-top: 80px; /* Adjust to make room for fixed top container */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust column sizing as needed */
+    grid-auto-rows: 200px; /* Set a fixed row height */
+    /*gap: 50px; /* Space between rows and columns */
+    min-height: calc(100vh - 60px); /* Ensure the container fills at least the available height */
+    box-sizing: border-box; /* Ensure padding is included in height */
+    align-items: center; /* Center items vertically in their grid area */
+}
+
+.item {
+    flex: 1 1 200px; /* Flex-grow, flex-shrink, and base size of 200px */
+    /*background-color: lightblue;*/
+    padding: 10px;
+    box-sizing: border-box; /* Ensures padding is included in width */
+}
+
+/* Fullscreen media elements */
+video.full-screen, img.full-screen {
+    background-color: transparent;  /* Removed background color to eliminate borders */
+    z-index: 9999; /* Higher than the overlay */
+    width: auto;
+    height: auto;
+    max-width: 100%; /* Changed from 90% to 100% to prevent border */
+    max-height: 100%; /* Changed from 90% to 100% to prevent border */
+}
+
+img:not(.full-screen),
+video:not(.full-screen) {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: contain;
+}
+
+/* Fullscreen container for zoomable content */
+.full-screen {
+    position: absolute; /* Absolute positioning for better control with scrolling */
+    top: 0; /* Align to top */
+    left: 0; /* Align to left */
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    overflow: auto; /* Allow scrolling */
+    display: flex; /* Centering content */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Ensure it is on top */
+    background-color: transparent; /* Removed background color to eliminate borders */
+}
+
+/* Container for zoomable content */
+.zoomable {
+    transition: transform 0.1s; /* Smooth zoom transition */
+    transform-origin: center center; /* Zoom around the center */
+}
+
+/* When dragging */
+.zoomable:active {
+    cursor: grabbing; /* Change cursor when dragging */
+}
+
+/* Arrow buttons for navigation */
+.arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10em; /* Adjust font size to control the size of the arrows */
+    color: rgba(0, 0, 0, 0.4);
+    /* background-color: rgba(0, 0, 0, 0.7);  Slightly darker background for better visibility */
+    padding: 80% 3%; /* Adjust padding to make the button wider */
+    cursor: pointer;
+    z-index: 10000; /* Ensure arrows are above everything */
+    display: none; /* Hidden by default */
+    border-radius: 50%; /* Make the button circular */
+    text-align: center; /* Center align the arrow symbols */
+    line-height: 1; /* Adjust line height to center the arrow */
+    box-shadow: none; /* Remove box shadow */
+    border: none; /* Remove border if present */
+    outline: none; /* Remove outline if present */
+    background: none; /* Remove any background that might be showing */
+    margin: 0; /* Ensure no extra margin is applied */
+}
+
+#prevArrow {
+    left: 10px;
+}
+
+#nextArrow {
+    right: 10px;
+}
+
+.search-bar.disabled {
+    pointer-events: none; /* Prevent interaction */
+    background-color: rgba(255, 255, 255, 0.5); /* Optional: add a visual indication */
+    color: rgba(0, 0, 0, 0.5); /* Optional: change text color to indicate it's disabled */
+}
+
+
+
+
+/* Hierarchical structure */
+.hierarchy {
+    padding: 0;
+    margin: 0;
+}
+
+.hierarchy-button, .tag-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #e0e0e0; /* Same background as .tag-item */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: left;
+    width: 100%; /* Full width within its container */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    position: relative; /* For positioning the checkmark or filled circle */
+}
+
+.hierarchy-button:hover, .tag-button:hover {
+    background-color: #d4d4d4; /* Same hover background as .tag-item:hover */
+}
+
+.child-buttons {
+    display: none; /* Hidden by default */
+    margin-left: 20px; /* Indent child buttons */
+}
+
+/* Filled circle to indicate selection */
+.selected::after {
+    content: '●'; /* Filled circle */
+    color: green;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+}
+
+/* Checkmark to indicate confirmation */
+.confirmed::after {
+    content: '✔'; /* Green checkmark */
+    color: green;
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+}
+
+/* Confirm button */
+.confirm-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.confirm-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.tags-management-container {
+	position: fixed;
+    top: 60px; /* Adjusted to be below the top container, using its height */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 60px); /* Fill remaining height */
+    background-color: #f4f4f4; /* Light gray background */
+    padding: 20px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    z-index: 9998; /* Higher than the overlay */
+    box-sizing: border-box; /* Ensure padding is included in height */
+    display: none; /* Start hidden */
+}
+
+.section-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+}
