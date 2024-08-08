@@ -312,8 +312,10 @@ public class Sql {
 
 	    public List<TagItem> getTagHierarchy() {
 	        // Query to get all tags and child tags
-	        String query = "SELECT t.id AS parentId, t.tag AS parentTag, ct.childTag AS childId, ct.childTag AS childTag " +
-	                       "FROM a_tags t LEFT JOIN a_child_tags ct ON t.id = ct.tag";
+	    	String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
+	                "FROM a_tags t1 " +
+	                "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
+	                "LEFT JOIN a_tags t2 ON ct.childTag = t2.id";
 	
 	        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
 	

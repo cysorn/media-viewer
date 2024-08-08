@@ -8,12 +8,12 @@ public class TagItem {
     private List<TagItem> subItems;
 
     public TagItem(String name) {
-        this.name = name;
+        this.name = Character.toUpperCase(name.charAt(0)) + name.substring(1).toLowerCase();
         subItems = new ArrayList<TagItem>();
     }
 
     public TagItem(String name, List<TagItem> subItems) {
-        this.name = name;
+        this.name = Character.toUpperCase(name.charAt(0)) + name.substring(1).toLowerCase();
         this.subItems = subItems;
     }
 
