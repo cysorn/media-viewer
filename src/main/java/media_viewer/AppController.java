@@ -55,11 +55,18 @@ public class AppController {
             Collections.sort(tags);
             
             
+            List<String> allTags = sql.getTags().stream()
+                    .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
+                    .collect(Collectors.toList());
+            Collections.sort(tags);
+            
+            
             showTags(model);
     	    model.addAttribute("mediaList", getUncategorizedFiles());
     	    model.addAttribute("imageFormats", imageFormats);
     	    model.addAttribute("videoFormats", videoFormats);
     	    model.addAttribute("tags", tags);
+    	    model.addAttribute("allTags", allTags);
 
  
     	    return "index";

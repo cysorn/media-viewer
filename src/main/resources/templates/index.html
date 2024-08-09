@@ -13,10 +13,10 @@
 
     <!-- Left container with search and tags -->
     <div class="side-container">
-        <input type="text" class="search-bar" placeholder="Search...">
+		<input type="text" class="search-bar" placeholder="Search...">
         <div class="tags-title">Tags</div>
         <div class="tags-list" id="tagsContainer">
-			<div th:each="tag : ${tags}" class="tag-item" style="font-size: 20px" th:text="${tag}"></div>
+			<div th:each="tag : ${allTags}" class="tag-item" style="font-size: 20px" th:text="${tag}"></div>
         </div>
     </div>
 	
