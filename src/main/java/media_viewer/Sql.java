@@ -302,6 +302,23 @@ public class Sql {
     }*/
     
     
+    
+    public List<String> getFilesByTags(List<String> tags){
+    	StringBuilder sql = new StringBuilder();
+    	sql.append("SELECT fileName FROM a_media_files mf ");
+    	for(String tag: tags)
+    	{
+    		sql.append("JOIN files_tagged_");
+    		sql.append(tag);
+    		sql.append(" ON mf.id = files_tagged_");
+    		sql.append(tag);
+    		sql.append(".mediaFile ");
+    	}
+    	
+    	return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> rs.getString("fileName")); 
+    }
+    
+    
     private void create_files_tagged_table(String tag) {
     	StringBuilder sql = new StringBuilder();
     	sql.append("CREATE TABLE `media_viewer`.`files_tagged_" + tag + "` (");

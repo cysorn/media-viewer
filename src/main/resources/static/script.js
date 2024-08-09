@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			      },
 			      body: JSON.stringify(data),
 			    });
-
+				
 			    if (!response.ok) {
 			      throw new Error(`HTTP error! Status: ${response.status}`);
 			    }
@@ -368,17 +368,18 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			
 			searchButton.addEventListener('click', function() {
+			    // Get the value from the input field with class 'search-bar'
+			    const elements = document.querySelectorAll('.search-bar');
+			    const printedTags = elements[0].value.trim().split(' ');
 
-				//searchBar
-				
-				const url = '/sendSearchTags';
-				const elements = document.querySelectorAll('.search-bar');
-				const printedTags = elements[0].value.trim().split(' ');
+			    // Prepare the data to be sent
+			    const data = {
+			        selectedTags: printedTags,
+			    };
 
-				const data = {
-				  selectedTags: printedTags,
-				};
-				postJson(url, data);
+			    // Send the data via a POST request
+			    const url = '/sendSearchTags';
+			    postJson(url, data);
 			});
 	
 			
@@ -414,19 +415,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	
 	searchBar.addEventListener('keydown', function(event) {
-	    // Check if the pressed key is 'Enter'
 	    if (event.key === 'Enter') {
-	        // Prevent the default action (e.g., form submission)
 	        event.preventDefault();
-			//searchBar
-			const url = '/sendSearchTags';
-			const elements = document.querySelectorAll('.search-bar');
-			const printedTags = elements[0].value.trim().split(' ');
+	        const url = '/sendSearchTags';
+	        const elements = document.querySelectorAll('.search-bar');
+	        const printedTags = elements[0].value.trim().split(' ');
 
-			const data = {
-				selectedTags: printedTags,
-			};
-			postJson(url, data);
+	        const data = {
+	            selectedTags: printedTags,
+	        };
+
+	        postJson(url, data);
 	    }
 	});
 	

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,13 +166,23 @@ public class AppController {
     }
     
     @PostMapping("/sendSearchTags")
-    public ResponseEntity<String> handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest) {
+    public ResponseEntity<String> handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest, Model model) {
         // Print the raw JSON data
-        System.out.println(tagSearchRequest.getSelectedTags());
-        
+    	System.out.println(tagSearchRequest.getSelectedTags());
+    	
+    	List<String> res = tagSearchRequest.getSelectedTags();
+    	List<String> files = sql.getFilesByTags(res);
+    	System.out.println(files);  		
+    	model.addAttribute("mediaList", files);
+    	System.out.println(model.getAttribute("mediaList"));
+       
         // Send a response
+    	//return "index";
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
-    }/*
+    }
+    
+    
+    /*
     
     
     @PostMapping("/sendTags")
