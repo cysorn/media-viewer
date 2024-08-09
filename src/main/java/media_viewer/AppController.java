@@ -200,24 +200,17 @@ public class AppController {
     @ResponseBody
     public String sayHi() {
     	
-    	/*
     	List<String> lis = new ArrayList<>(List.of("general", "rofl", "nerd", "stupid"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
+    
     	lis = new ArrayList<>(List.of("video", "picture"));
-    	sql.extendChildTags("general", lis);
+    	sql.asignChildTags("general", lis);
+    	
     	lis = new ArrayList<>(List.of("lol", "kek"));
     	sql.addAliases("rofl", lis);
-    	lis = new ArrayList<>(List.of("pic"));
-    	sql.addAliases("picture", lis);
+    	
     	lis = new ArrayList<>(List.of("nerd", "picture", "rofl"));
-    	sql.addOrFindMediaFileAndAssignTagsToIt("1.jpg", lis);
-    	lis = new ArrayList<>(List.of("video", "stupid", "rofl"));
-    	sql.addOrFindMediaFileAndAssignTagsToIt("2.mp4", lis);
-    	lis = new ArrayList<>(List.of("picture", "rofl"));
-    	sql.addOrFindMediaFileAndAssignTagsToIt("3.mp4", lis);
-    	lis = new ArrayList<>(List.of("picture", "rofl"));
-    	sql.addOrFindMediaFileAndAssignTagsToIt("4.jpg", lis);
-		*/
+    	sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
         return "Hi";
     }
  
@@ -240,7 +233,7 @@ public class AppController {
     	//System.out.println(tagRequest.getCurrentFileIndex());
     	//System.out.println(tagRequest.getSelectedTags());
     	//System.out.println(tagRequest.getFileLocation());
-    	sql.addOrFindMediaFileAndAssignTagsToIt(newFileName, tagRequest.getSelectedTags());
+    	sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);

@@ -65,7 +65,7 @@ public class Sql {
     //Executed after POST request
     //THIS ASSUMES THAT extendTagsTableAndCreateFileTagsTables WAS ALREADY EXECUTED
     @Transactional
-    public void addOrFindMediaFileAndAssignTagsToIt(String mediaFileName, List<String> tags) {
+    public void addOrFindMediaFileAndAsignTagsToIt(String mediaFileName, List<String> tags) {
         // Remove duplicates from the list of tags
         List<String> uniqueTags = new ArrayList<>(new HashSet<>(tags));
         
@@ -103,7 +103,7 @@ public class Sql {
     
     //Executed by admin BY AI
     @Transactional
-    public void extendChildTags(String parent, List<String> children) {
+    public void asignChildTags(String parent, List<String> children) {
     	List<String> uniqueChildren = new ArrayList<>(new HashSet<>(children));
     	
     	extendTagsTableAndCreateFileTagsTablesIfNecessary(uniqueChildren);
