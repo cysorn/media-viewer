@@ -28,19 +28,18 @@
 	<div class="container">
 	        <!-- Loop through each media item in the list -->
 	        <div th:each="media : ${mediaList}">
-	            <!-- Check if the media is an image -->
-	            <div th:if="${#lists.contains(imageFormats, #strings.substring(media, media.lastIndexOf('.')))}">
-	                <img th:src="@{${media}}" alt="Image" width="150" height="150" />
-	            </div>
+				<!-- Check if the media is an image -->
+				<th:block th:if="${media != null and imageFormats != null and #lists.contains(imageFormats, #strings.substring(media, media.lastIndexOf('.')))}">
+				    <img th:src="@{${media}}" alt="Image" width="150" height="150" />
+				</th:block>
 
-	            <!-- Check if the media is a video -->
-	            <div th:if="${#lists.contains(videoFormats, #strings.substring(media, media.lastIndexOf('.')))}">
-	                <video width="150" height="150" controls>
-	                    <source th:src="@{${media}}" th:type="'video/' + ${#strings.substring(media, media.lastIndexOf('.') + 1)}">
-	                    Your browser does not support the video tag.
-	                </video>
-	            </div>
-
+				<!-- Check if the media is a video -->
+				<th:block th:if="${media != null and videoFormats != null and #lists.contains(videoFormats, #strings.substring(media, media.lastIndexOf('.')))}">
+				    <video width="150" height="150" controls>
+				        <source th:src="@{${media}}" th:type="'video/' + ${#strings.substring(media, media.lastIndexOf('.') + 1)}">
+				        Your browser does not support the video tag.
+				    </video>
+				</th:block>
 	        </div>
 	    </div>
     <div class="overlay"></div>

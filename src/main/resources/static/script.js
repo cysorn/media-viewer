@@ -366,6 +366,26 @@ document.addEventListener('DOMContentLoaded', function() {
 			  }
 			}
 			
+			async function postSearchJson(url, data) {
+			  try {
+			    const response = await fetch(url, {
+			      method: 'POST',
+			      headers: {
+			        'Content-Type': 'application/json',
+			      },
+			      body: JSON.stringify(data),
+			    });
+
+			    if (!response.ok) {
+			      throw new Error(`HTTP error! Status: ${response.status}`);
+			    }
+			    window.location.href = '/';
+			    
+			  } catch (error) {
+			    console.error('Error:', error);
+			  }
+			}
+			
 			
 			searchButton.addEventListener('click', function() {
 			    // Get the value from the input field with class 'search-bar'
@@ -379,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			    // Send the data via a POST request
 			    const url = '/sendSearchTags';
-			    postJson(url, data);
+			    postSearchJson(url, data);
 			});
 	
 			
@@ -425,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	            selectedTags: printedTags,
 	        };
 
-	        postJson(url, data);
+	        postSearchJson(url, data);
 	    }
 	});
 	
