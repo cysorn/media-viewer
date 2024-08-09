@@ -297,6 +297,7 @@ window.addEventListener('focus', startFocusInterval);
 
 document.addEventListener('DOMContentLoaded', function() {
     const confirmButton = document.getElementById('confirmButton');
+	const searchButton = document.getElementById('searchButton');
 	
 	// Select all tag items
 	        const tagItems = document.querySelectorAll('.tag-item');
@@ -366,6 +367,20 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 			
 			
+			searchButton.addEventListener('click', function() {
+
+				//searchBar
+				
+				const url = '/test';
+				const elements = document.querySelectorAll('.search-bar');
+				const printedTags = Array.from(elements).map(element => element.value.trim());
+				const data = {
+				  selectedTags: printedTags,
+				};
+				postJson(url, data);
+			});
+	
+			
     confirmButton.addEventListener('click', function() {
         buttons.forEach(button => {
             // If the button is selected, confirm it; otherwise, remove confirmation
@@ -396,6 +411,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		postJson(url, data);
     });
 
+	
+	searchBar.addEventListener('keydown', function(event) {
+	    // Check if the pressed key is 'Enter'
+	    if (event.key === 'Enter') {
+	        // Prevent the default action (e.g., form submission)
+	        event.preventDefault();
+			//searchBar
+			const url = '/test';
+			const elements = document.querySelectorAll('.search-bar');
+			const printedTags = Array.from(elements).map(element => element.value.trim());
+			const data = {
+				selectedTags: printedTags,
+			};
+			postJson(url, data);
+	    }
+	});
+	
+	
     // Event listener (former 'M' key press)
     document.addEventListener('keydown', function(event) {
         if (fullscreenElement && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {

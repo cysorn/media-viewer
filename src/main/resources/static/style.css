@@ -56,7 +56,7 @@ html, body {
 .search-bar {
     width: 90%;
     padding: 10px;
-    margin-bottom: 20px;
+    /*margin-bottom: 5px;*/
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -252,6 +252,26 @@ video:not(.full-screen) {
 .confirm-button:hover {
     background-color: #45a049; /* Darker green on hover */
 }
+/* Search button */
+.search-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.search-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+
 
 .tags-management-container {
 	position: fixed;
