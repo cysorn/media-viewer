@@ -310,33 +310,29 @@ document.addEventListener('DOMContentLoaded', function() {
 	            });
 	        });
 
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (this.classList.contains('hierarchy-button')) {
-                // If another hierarchical button was previously selected, remove the selection
-                if (selectedButton) {
-                    selectedButton.classList.remove('selected');
-                }
+			buttons.forEach(button => {
+			    button.addEventListener('click', function() {
+			        if (this.classList.contains('hierarchy-button')) {
+			            
+			            // Toggle the selection state for the clicked hierarchical button
+			            if (this.classList.contains('selected')) {
+			                this.classList.remove('selected');
+			            } else {
+			                this.classList.add('selected');
+			            }
 
-                // Mark the clicked hierarchical button as selected
-                this.classList.add('selected');
-                selectedButton = this;
-
-                // Toggle visibility of child buttons, if any
-                const childButtons = this.nextElementSibling;
-                if (childButtons && childButtons.classList.contains('child-buttons')) {
-                    childButtons.style.display = 
-                        childButtons.style.display === 'block' ? 'none' : 'block';
-                }
-            }
-		
-			else {
-                // Toggle the selection state for tag buttons
-                this.classList.toggle('selected');
-            }
-			
-        });
-    });
+			            // Toggle visibility of child buttons, if any
+			            const childButtons = this.nextElementSibling;
+			            if (childButtons && childButtons.classList.contains('child-buttons')) {
+			                childButtons.style.display = 
+			                    childButtons.style.display === 'block' ? 'none' : 'block';
+			            }
+			        } else {
+			            // Toggle the selection state for tag buttons
+			            this.classList.toggle('selected');
+			        }
+			    });
+			});
 
     confirmButton.addEventListener('click', function() {
         buttons.forEach(button => {
