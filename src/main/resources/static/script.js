@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 				//searchBar
 				
-				const url = '/test';
+				const url = '/sendSearchTags';
 				const elements = document.querySelectorAll('.search-bar');
 				const printedTags = Array.from(elements).map(element => element.value.trim());
 				const data = {
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-		const url = '/test';
+		const url = '/sendTags';
 		const elements = document.querySelectorAll('.hierarchy-button.selected, .tag-button.selected');
 		const tags = Array.from(elements).map(element => element.textContent.trim());
 		const data = {
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	        // Prevent the default action (e.g., form submission)
 	        event.preventDefault();
 			//searchBar
-			const url = '/test';
+			const url = '/sendSearchTags';
 			const elements = document.querySelectorAll('.search-bar');
 			const printedTags = Array.from(elements).map(element => element.value.trim());
 			const data = {

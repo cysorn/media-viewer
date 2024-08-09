@@ -151,58 +151,127 @@ public class AppController {
     	sql.addOrFindMediaFileAndAssignTagsToIt("4.jpg", lis);
         */
         return "Hi";
-        
     }
-    @PostMapping("/test")
-    public ResponseEntity<String> handlePostRequest(@RequestBody String json) {
+ 
+    @PostMapping("/sendTags")
+    public ResponseEntity<String> handleTagsPostRequest(@RequestBody TagRequest tagRequest) {
+        // Print the raw JSON data
+        System.out.println(tagRequest.getCurrentFileIndex());
+        System.out.println(tagRequest.getSelectedTags());
+        System.out.println(tagRequest.getFileLocation());
+        
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+    
+    @PostMapping("/sendSearchTags")
+    public ResponseEntity<String> handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest) {
+        // Print the raw JSON data
+        System.out.println(tagSearchRequest.getSelectedTags());
+        
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }/*
+    
+    
+    @PostMapping("/sendTags")
+    public ResponseEntity<String> handleTagsPostRequest(@RequestBody String json) {
         // Print the raw JSON data
         System.out.println(json);
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
-
+    
+    @PostMapping("/sendSearchTags")
+    public ResponseEntity<String> handleSearchPostRequest(@RequestBody String json) {
+        // Print the raw JSON data
+        System.out.println(json);
+        
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+	*/
     // Static nested class
-    public static class YourDataModel {
+    public static class TagRequest  {
 
-        private String name;
-        private String email;
+        private List<String> selectedTags;
+        private int currentFileIndex;
+        private String fileLocation;
 
         // Default constructor
-        public YourDataModel() {
+        public TagRequest () {
         }
 
         // Parameterized constructor
-        public YourDataModel(String name, String email) {
-            this.name = name;
-            this.email = email;
+        public TagRequest (List<String> selectedTags, int currentFileIndex, String fileLocation) {
+            this.selectedTags = selectedTags;
+            this.currentFileIndex = currentFileIndex;
+            this.fileLocation = fileLocation;
         }
 
         // Getters and Setters
-        @JsonProperty("name")
-        public String getName() {
-            return name;
+        @JsonProperty("selectedTags")
+        public List<String> getSelectedTags() {
+            return selectedTags;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setSelectedTags(List<String> selectedTags) {
+            this.selectedTags = selectedTags;
         }
 
-        @JsonProperty("email")
-        public String getEmail() {
-            return email;
+        @JsonProperty("currentFileIndex")
+        public int getCurrentFileIndex() {
+            return currentFileIndex;
         }
 
-        public void setEmail(String email) {
-            this.email = email;
+        public void setCurrentFileIndex(int currentFileIndex) {
+            this.currentFileIndex = currentFileIndex;
+        }
+        
+        @JsonProperty("fileLocation")
+        public String getFileLocation() {
+            return fileLocation;
+        }
+
+        public void setFileLocation(String fileLocation) {
+            this.fileLocation = fileLocation;
         }
 
         @Override
         public String toString() {
-            return "YourDataModel{" +
-                    "name='" + name + '\'' +
-                    ", email='" + email + '\'' +
-                    '}';
+			return "TO_STRING_FUNCTION";
+        }
+    }
+    
+    // Static nested class
+    public static class TagSearchRequest  {
+
+    	private List<String> selectedTags;
+
+        // Default constructor
+        public TagSearchRequest () {
+        }
+        
+        // Parameterized constructor
+        public TagSearchRequest (List<String> selectedTags) {
+            this.selectedTags = selectedTags;
+        }
+
+        // Getters and Setters
+        
+        @JsonProperty("selectedTags")
+        public List<String> getSelectedTags() {
+            return selectedTags;
+        }
+
+        public void setSelectedTags(List<String> selectedTags) {
+            this.selectedTags = selectedTags;
+        }
+
+        @Override
+        public String toString() {
+			return "TO_STRING_FUNCTION";
         }
     }
 }
