@@ -1,6 +1,11 @@
 package media_viewer;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +29,9 @@ public class AppController {
 
 	String mediaLocation = "/media_files/";
 	String uncategorizedLocation = "/uncategorized/";
+	String workingLocation = "E:/testing_media_viewer";
 	String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
+	String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
 	List<String> mediaDivContent;
 	
 	@Autowired
@@ -129,7 +136,64 @@ public class AppController {
         return fileNames;
     }
 
+	private int getNextFreeFileName(){
+		
+        File mediaFiles = new File(absoluteMediaFilesLocation);
+        int highestFileName = 0;
+        int fileNameNumber = 0;
+        
+        // Check if directory exists and is a directory
+        if (mediaFiles.exists() && mediaFiles.isDirectory()) {
+            File[] files = mediaFiles.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String fileName = file.getName();
+                	fileName = file.getName().substring(0, fileName.lastIndexOf('.')); // Includes the dot
+                    if (file.isFile()) { // Only get files, not directories
+                    	fileNameNumber = Integer.parseInt(fileName);
+                        if(highestFileName < fileNameNumber)
+                        {
+                        	highestFileName = fileNameNumber;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return highestFileName + 1;
+	}
 	
+	private String moveFileToMediaFolderAndGetName(File file) throws IOException {
+        // Check if file exists
+        if (!file.exists()) {
+            throw new IOException("File does not exist: " + file.getAbsolutePath());
+        }
+
+        // Extract the file extension
+        int nextFreeFileName = getNextFreeFileName();
+        String fileName = file.getName();
+        String fileExtension = "";
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            fileExtension = fileName.substring(dotIndex); // Includes the dot
+        }
+
+        // Rename the file to 133713371337 with the original extension
+        String tempFileName = "13371337" + fileExtension;
+        Path tempFilePath = Paths.get(absoluteUncategorizedLocation, tempFileName);
+        Files.move(file.toPath(), tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Move the renamed file to the new location
+        Path movedFilePath = Paths.get(absoluteMediaFilesLocation, tempFileName);
+        Files.move(tempFilePath, movedFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Rename the file to the new name with the original extension
+        String finalFileName = nextFreeFileName + fileExtension;
+        Path finalFilePath = movedFilePath.resolveSibling(finalFileName);
+        Files.move(movedFilePath, finalFilePath, StandardCopyOption.REPLACE_EXISTING);
+        
+        return finalFileName;
+    }
 	
 	//ADD HANDLING FOR SECOND EXECUTION.
     @GetMapping("/hello")
@@ -153,16 +217,30 @@ public class AppController {
     	sql.addOrFindMediaFileAndAssignTagsToIt("3.mp4", lis);
     	lis = new ArrayList<>(List.of("picture", "rofl"));
     	sql.addOrFindMediaFileAndAssignTagsToIt("4.jpg", lis);
-        */
+		*/
         return "Hi";
     }
  
     @PostMapping("/sendTags")
     public ResponseEntity<String> handleTagsPostRequest(@RequestBody TagRequest tagRequest) {
         // Print the raw JSON data
-        System.out.println(tagRequest.getCurrentFileIndex());
-        System.out.println(tagRequest.getSelectedTags());
-        System.out.println(tagRequest.getFileLocation());
+    	
+    	String receivedMediaFileName = tagRequest.getFileLocation();
+    	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
+    	String uncatMediaFileName = workingLocation + receivedMediaFileName;
+
+    	String newFileName;
+    	try {
+			newFileName = moveFileToMediaFolderAndGetName(new File(uncatMediaFileName));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+    	
+    	//System.out.println(tagRequest.getCurrentFileIndex());
+    	//System.out.println(tagRequest.getSelectedTags());
+    	//System.out.println(tagRequest.getFileLocation());
+    	sql.addOrFindMediaFileAndAssignTagsToIt(newFileName, tagRequest.getSelectedTags());
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
@@ -171,7 +249,7 @@ public class AppController {
     @PostMapping("/sendSearchTags")
     public String handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest, Model model) {
         // Print the raw JSON data
-    	System.out.println(tagSearchRequest.getSelectedTags());
+    	//System.out.println(tagSearchRequest.getSelectedTags());
     	
     	List<String> res = tagSearchRequest.getSelectedTags();
     	List<String> files = sql.getFilesByTags(res)
