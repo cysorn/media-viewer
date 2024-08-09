@@ -373,7 +373,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				
 				const url = '/sendSearchTags';
 				const elements = document.querySelectorAll('.search-bar');
-				const printedTags = Array.from(elements).map(element => element.value.trim());
+				const printedTags = elements[0].value.trim().split(' ');
+
 				const data = {
 				  selectedTags: printedTags,
 				};
@@ -420,7 +421,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			//searchBar
 			const url = '/sendSearchTags';
 			const elements = document.querySelectorAll('.search-bar');
-			const printedTags = Array.from(elements).map(element => element.value.trim());
+			const printedTags = elements[0].value.trim().split(' ');
+
 			const data = {
 				selectedTags: printedTags,
 			};
