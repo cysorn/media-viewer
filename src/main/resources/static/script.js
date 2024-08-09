@@ -334,6 +334,38 @@ document.addEventListener('DOMContentLoaded', function() {
 			    });
 			});
 
+			
+			
+			/**
+			 * Sends a POST request with JSON data.
+			 *
+			 * @param {string} url - The URL to send the POST request to.
+			 * @param {object} data - The data to be sent in the request body.
+			 * @returns {Promise<object>} - A promise that resolves with the response data.
+			 */
+			async function postJson(url, data) {
+			  try {
+			    const response = await fetch(url, {
+			      method: 'POST',
+			      headers: {
+			        'Content-Type': 'application/json',
+			      },
+			      body: JSON.stringify(data),
+			    });
+
+			    if (!response.ok) {
+			      throw new Error(`HTTP error! Status: ${response.status}`);
+			    }
+
+			    const result = await response.json();
+			    return result;
+			  } catch (error) {
+			    console.error('Error:', error);
+			    throw error;
+			  }
+			}
+			
+			
     confirmButton.addEventListener('click', function() {
         buttons.forEach(button => {
             // If the button is selected, confirm it; otherwise, remove confirmation
@@ -352,6 +384,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+
+		const url = '/test';
+		const elements = document.querySelectorAll('.hierarchy-button.selected, .tag-button.selected');
+		const tags = Array.from(elements).map(element => element.textContent.trim());
+		const data = {
+		  selectedTags: tags,
+		  currentFileIndex: currentIndex,
+		  fileLocation: mediaFiles[currentIndex],
+		};
+		postJson(url, data);
     });
 
     // Event listener (former 'M' key press)

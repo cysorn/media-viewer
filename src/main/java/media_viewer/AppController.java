@@ -8,10 +8,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Controller
 public class AppController {
@@ -146,5 +152,57 @@ public class AppController {
         */
         return "Hi";
         
+    }
+    @PostMapping("/test")
+    public ResponseEntity<String> handlePostRequest(@RequestBody String json) {
+        // Print the raw JSON data
+        System.out.println(json);
+        
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+
+    // Static nested class
+    public static class YourDataModel {
+
+        private String name;
+        private String email;
+
+        // Default constructor
+        public YourDataModel() {
+        }
+
+        // Parameterized constructor
+        public YourDataModel(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+
+        // Getters and Setters
+        @JsonProperty("name")
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @JsonProperty("email")
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        @Override
+        public String toString() {
+            return "YourDataModel{" +
+                    "name='" + name + '\'' +
+                    ", email='" + email + '\'' +
+                    '}';
+        }
     }
 }
