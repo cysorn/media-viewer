@@ -65,6 +65,7 @@ public class AppController {
         this.absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
         this.absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
         this.mediaDivContent = getUncategorizedFiles();
+        Collections.shuffle(mediaDivContent);
     }
 
     // 
@@ -113,8 +114,9 @@ public class AppController {
     	    model.addAttribute("tags", tags);
     	    model.addAttribute("allTags", allTags);
     	    
+    	    
     	    mediaDivContent = getUncategorizedFiles();
-
+            Collections.shuffle(mediaDivContent);
  
     	    return "index";
     }
@@ -287,6 +289,7 @@ public class AppController {
     				.map(fName -> mediaLocation + fName)
     				.collect(Collectors.toList());
     		
+            Collections.shuffle(files);
     		mediaDivContent = files;    		
     	}
     	/*

@@ -150,14 +150,32 @@ document.addEventListener('keydown', (event) => {
         if (fullscreenElement.tagName === 'VIDEO') {
             fullscreenElement.pause();
             fullscreenElement.currentTime = 0;
+			
         }
-        navigateMedia(1); // Right arrow for next media
+
+		if (tagsManagementContainer.style.display === 'block') {
+					navigateMedia(1); // Right arrow for next media
+		            tagsManagementContainer.style.display = 'block';
+					//prevArrow.style.display = 'none'; // Hide arrows
+					//nextArrow.style.display = 'none';
+		        } else {
+					navigateMedia(1); // Right arrow for next media
+		        }
     } else if (event.key === 'ArrowLeft' && fullscreenElement) {
         if (fullscreenElement.tagName === 'VIDEO') {
             fullscreenElement.pause();
             fullscreenElement.currentTime = 0;
         }
-        navigateMedia(-1); // Left arrow for previous media
+		
+		if (tagsManagementContainer.style.display === 'block') {
+					navigateMedia(-1); // Right arrow for next media
+		            tagsManagementContainer.style.display = 'block';
+					//prevArrow.style.display = 'none'; // Hide arrows
+					//nextArrow.style.display = 'none';
+		        } else {
+					navigateMedia(-1); // Left arrow for previous media
+		        }
+
 	} else if (event.key === 'End' && fullscreenElement) { // Reset zoom and potision
         navigateMedia(1); // Right arrow for next media
 		navigateMedia(-1); // Left arrow for previous media
@@ -216,7 +234,14 @@ nextArrow.addEventListener('click', () => {
         fullscreenElement.pause();
         fullscreenElement.currentTime = 0;
     }
-    navigateMedia(1); // Go to next media
+	if (tagsManagementContainer.style.display === 'block') {
+				navigateMedia(1); // Right arrow for next media
+	            tagsManagementContainer.style.display = 'block';
+				//prevArrow.style.display = 'none'; // Hide arrows
+				//nextArrow.style.display = 'none';
+	        } else {
+				navigateMedia(1); // Right arrow for next media
+	        }
 });
 
 prevArrow.addEventListener('click', () => {
@@ -224,7 +249,14 @@ prevArrow.addEventListener('click', () => {
         fullscreenElement.pause();
         fullscreenElement.currentTime = 0;
     }
-    navigateMedia(-1); // Go to previous media
+	if (tagsManagementContainer.style.display === 'block') {
+				navigateMedia(-1); // Right arrow for next media
+	            tagsManagementContainer.style.display = 'block';
+				//prevArrow.style.display = 'none'; // Hide arrows
+				//nextArrow.style.display = 'none';
+	        } else {
+				navigateMedia(-1); // Right arrow for next media
+	        }
 });
 
 function navigateMedia(direction) {
