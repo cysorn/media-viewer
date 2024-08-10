@@ -27,23 +27,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Controller
 public class AppController {
 
+	/*
 	String mediaLocation = "/media_files/";
 	String uncategorizedLocation = "/uncategorized/";
 	String workingLocation = "E:/testing_media_viewer";
 	String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
 	String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
-	List<String> mediaDivContent;
+	*/
+	
+	
+	
 	
 	@Autowired
-	Sql sql;
+	DbSetup dbSetup;
 
+	String mediaLocation = "/media_files/";
+	String uncategorizedLocation = "/uncategorized/";
+	String workingLocation;
+	String absoluteUncategorizedLocation;
+	String absoluteMediaFilesLocation;
+
+	
+	List<String> mediaDivContent;
 	AppController(){
-		mediaDivContent = getUncategorizedFiles();
+		
 	}
 	
     @GetMapping("/")
     public String func(Model model) {
 
+    	//This must be in the constructor
+    	workingLocation = dbSetup.workingLocation;
+    	absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
+    	absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
+    	mediaDivContent = getUncategorizedFiles();
 
     	List<String> imageFormats = Arrays.asList(
     		    ".png",   // Portable Network Graphics
@@ -66,13 +83,13 @@ public class AppController {
     		    ".avi",    // AVI (supported in some browsers with limited compatibility)
     		    ".3gp"     // 3GPP (supported in most modern browsers)
     		);
-    	    List<String> tags = sql.getTagsWithNoFamilyRelations().stream()
+    	    List<String> tags = dbSetup.sql.getTagsWithNoFamilyRelations().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
             
             
-            List<String> allTags = sql.getTags().stream()
+            List<String> allTags = dbSetup.sql.getTags().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
@@ -112,7 +129,7 @@ public class AppController {
 
         // Pass the top-level list to the model
         */
-    	List<TagItem> tagItems = sql.getTagHierarchy();
+    	List<TagItem> tagItems = dbSetup.sql.getTagHierarchy();
         model.addAttribute("items", tagItems);
     }
     
@@ -200,6 +217,9 @@ public class AppController {
     @ResponseBody
     public String sayHi() {
     	
+    	//setupDb1
+    	dbSetup.setupDb();
+    	/*
     	List<String> lis = new ArrayList<>(List.of("general", "rofl", "nerd", "stupid"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
     
@@ -211,6 +231,8 @@ public class AppController {
     	
     	lis = new ArrayList<>(List.of("nerd", "picture", "rofl"));
     	sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
+        */
+    	
         return "Hi";
     }
  
@@ -233,7 +255,7 @@ public class AppController {
     	//System.out.println(tagRequest.getCurrentFileIndex());
     	//System.out.println(tagRequest.getSelectedTags());
     	//System.out.println(tagRequest.getFileLocation());
-    	sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
+    	dbSetup.sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
@@ -245,7 +267,7 @@ public class AppController {
     	//System.out.println(tagSearchRequest.getSelectedTags());
     	
     	List<String> res = tagSearchRequest.getSelectedTags();
-    	List<String> files = sql.getFilesByTags(res)
+    	List<String> files = dbSetup.sql.getFilesByTags(res)
     			.stream()
                 .map(fName -> mediaLocation + fName)
                 .collect(Collectors.toList());
