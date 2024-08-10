@@ -38,29 +38,40 @@ public class AppController {
 	
 	
 	
-	@Autowired
-	DbSetup dbSetup;
 
-	String mediaLocation = "/media_files/";
-	String uncategorizedLocation = "/uncategorized/";
-	String workingLocation;
-	String absoluteUncategorizedLocation;
-	String absoluteMediaFilesLocation;
-
-	
-	List<String> mediaDivContent;
+    private String mediaLocation = "/media_files/";
+    private String uncategorizedLocation = "/uncategorized/";
+    private String workingLocation;
+    private String absoluteUncategorizedLocation;
+    private String absoluteMediaFilesLocation;
+    private List<String> mediaDivContent;
+    
+    /*
 	AppController(){
-		
+		mediaLocation = "/media_files/";
+		uncategorizedLocation = "/uncategorized/";
+		workingLocation = dbSetup.workingLocation;
+		absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
+		absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
 	}
+	*/
+	
+    private final DbSetup dbSetup;
+
+    @Autowired
+    public AppController(DbSetup dbSetup) {
+        this.dbSetup = dbSetup;
+        this.workingLocation = dbSetup.workingLocation;
+        this.absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
+        this.absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
+        this.mediaDivContent = getUncategorizedFiles();
+    }
+
+    // 
 	
     @GetMapping("/")
     public String func(Model model) {
 
-    	//This must be in the constructor
-    	workingLocation = dbSetup.workingLocation;
-    	absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
-    	absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
-    	mediaDivContent = getUncategorizedFiles();
 
     	List<String> imageFormats = Arrays.asList(
     		    ".png",   // Portable Network Graphics
