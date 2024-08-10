@@ -107,7 +107,7 @@ html, body {
 /* Fullscreen media elements */
 video.full-screen, img.full-screen {
     background-color: transparent;  /* Removed background color to eliminate borders */
-    z-index: 9999; /* Higher than the overlay */
+    z-index: 9998; /* Higher than the overlay */
     width: auto;
     height: auto;
     max-width: 100%; /* Changed from 90% to 100% to prevent border */
@@ -132,7 +132,7 @@ video:not(.full-screen) {
     display: flex; /* Centering content */
     align-items: center;
     justify-content: center;
-    z-index: 9999; /* Ensure it is on top */
+    z-index: 9998; /* Ensure it is on top */
     background-color: transparent; /* Removed background color to eliminate borders */
 }
 
@@ -282,7 +282,7 @@ video:not(.full-screen) {
     padding: 20px;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    z-index: 9998; /* Higher than the overlay */
+    z-index: 10001; /* Higher than the overlay */
     box-sizing: border-box; /* Ensure padding is included in height */
     display: none; /* Start hidden */
 }

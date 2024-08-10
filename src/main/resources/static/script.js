@@ -494,12 +494,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Toggle visibility of the side-container
             if (tagsManagementContainer.style.display === 'none' || tagsManagementContainer.style.display === '') {
                 tagsManagementContainer.style.display = 'block';
-				prevArrow.style.display = 'none'; // Hide arrows
-				nextArrow.style.display = 'none';
+				//prevArrow.style.display = 'none'; // Hide arrows
+				//nextArrow.style.display = 'none';
             } else {
                 tagsManagementContainer.style.display = 'none';
-				prevArrow.style.display = 'block';
-				nextArrow.style.display = 'block';
+				//prevArrow.style.display = 'block';
+				//nextArrow.style.display = 'block';
             }
         }
     });
