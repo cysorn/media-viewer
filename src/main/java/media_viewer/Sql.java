@@ -338,7 +338,8 @@ public class Sql {
                        "FROM a_tags t1 " +
                        "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
                        "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
-                       "WHERE ct.childTag IS NOT NULL";  // Only include tags that have children
+                       "WHERE ct.childTag IS NOT NULL " + 
+                       "ORDER BY parentTag, childTag;";  // Only include tags that have children
 
         List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
 
