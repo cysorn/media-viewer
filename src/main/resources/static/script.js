@@ -19,6 +19,7 @@ function getMediaElements() {
     return container.querySelectorAll('video, img');
 }
 
+
 // Function to handle media element click
 function handleMediaClick(element, index) {
     return () => {
@@ -61,6 +62,7 @@ function toggleFullscreen(element) {
 			container.style.display = 'none';
 		});
 		selectedButton = null;
+
 		
     } else {
         element.classList.add('full-screen');
@@ -309,6 +311,19 @@ window.addEventListener('focus', startFocusInterval);
 document.addEventListener('DOMContentLoaded', function() {
     const confirmButton = document.getElementById('confirmButton');
 	const searchButton = document.getElementById('searchButton');
+	
+	function setAllVideosToLoop() {
+	    // Get all media elements from the container
+	    const mediaElements = getMediaElements();
+
+	    // Iterate through each media element
+	    mediaElements.forEach(element => {
+	        if (element.tagName === 'VIDEO') {
+	            element.loop = true;  // Set the video to loop
+	        }
+	    });
+	}
+	setAllVideosToLoop();
 	
 	// Select all tag items
 	        const tagItems = document.querySelectorAll('.tag-item');

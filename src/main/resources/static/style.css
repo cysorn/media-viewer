@@ -3,7 +3,6 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Prevent horizontal scrolling */
-	overflow-y: hidden; /* Prevent vertical scrolling */
     height: 100%;
 	user-select: none; /* Disables text selection */
 }
