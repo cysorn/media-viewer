@@ -254,6 +254,11 @@ public class Sql {
     	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
     }
     
+    public List<String> giveTagsWithNoParents(){
+    	String sql = "SELECT DISTINCT t.tag FROM `a_tags` t LEFT JOIN `a_child_tags` ct ON t.id = ct.childTag WHERE ct.childTag IS NULL;";
+    	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag"));
+    }
+    
     public List<String> getTagsWithNoFamilyRelations(){
     	String sql = "SELECT t.tag FROM `a_tags` t WHERE t.id NOT IN (SELECT tag FROM `a_child_tags`) AND t.id NOT IN (SELECT childTag FROM `a_child_tags`);";
     	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
@@ -335,13 +340,12 @@ public class Sql {
 
     public List<TagItem> getTagHierarchy() {
         // Query to get all tags and child tags
-    	String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
-                "FROM a_tags t1 " +
-                "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
-                "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
-                "WHERE ct.childTag IS NOT NULL " +  // Only include tags that have children
-                "AND t1.id NOT IN (SELECT childTag FROM a_child_tags) " + // Exclude tags that are children themselves
-                "ORDER BY parentTag, childTag;";
+        String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
+                       "FROM a_tags t1 " +
+                       "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
+                       "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
+                       "WHERE ct.childTag IS NOT NULL " + 
+                       "ORDER BY parentTag, childTag;";  // Only include tags that have children
 
         List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
 
@@ -356,7 +360,9 @@ public class Sql {
             Integer childId = row.getChildId();
             String childTag = row.getChildTag();
 
+            
             tagMap.putIfAbsent(parentId, new TagItem(parentTag));
+            
             if (childId != null) {
                 tagMap.putIfAbsent(childId, new TagItem(childTag));
                 childMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(tagMap.get(childId));
@@ -373,6 +379,18 @@ public class Sql {
             }
         }
 
+
+        result = result.stream()
+                .filter(tagItem -> {
+                    // Capitalize the first letter of each string in the output of giveTagsWithNoParents()
+                    List<String> capitalizedTags = giveTagsWithNoParents().stream()
+                         .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1))
+                         .collect(Collectors.toList());
+                    // Check if the capitalized name of the TagItem is in the list
+                    return capitalizedTags.contains(tagItem.getName());
+                })
+                .collect(Collectors.toList());
+        
         return result;  // Return only parent tags with children
     }
 	
