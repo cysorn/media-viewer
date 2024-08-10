@@ -62,6 +62,13 @@ function toggleFullscreen(element) {
 			container.style.display = 'none';
 		});
 		selectedButton = null;
+		
+		
+		document.body.style.overflowY = 'auto';
+		// Alternatively, to be more thorough, apply it to both html and body
+		document.documentElement.style.overflowY = 'auto'; // For the <html> element
+		document.body.style.overflowY = 'auto'; // For the <body> element
+		
 
 		
     } else {
@@ -78,6 +85,11 @@ function toggleFullscreen(element) {
         prevArrow.style.display = 'block'; // Show arrows
         nextArrow.style.display = 'block';
 		searchBar.setAttribute('readonly', true); // Make the search bar non-editable
+		
+		document.body.style.overflowY = 'hidden';
+		// Alternatively, to be more thorough, apply it to both html and body
+		document.documentElement.style.overflowY = 'hidden'; // For the <html> element
+		document.body.style.overflowY = 'hidden'; // For the <body> element
     }
 }
 
