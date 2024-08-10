@@ -304,6 +304,7 @@ public class Sql {
     
     
     public List<String> getFilesByTags(List<String> tags){
+    	
     	StringBuilder sql = new StringBuilder();
     	sql.append("SELECT fileName FROM a_media_files mf ");
     	for(String tag: tags)
@@ -334,12 +335,13 @@ public class Sql {
 
     public List<TagItem> getTagHierarchy() {
         // Query to get all tags and child tags
-        String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
-                       "FROM a_tags t1 " +
-                       "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
-                       "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
-                       "WHERE ct.childTag IS NOT NULL " + 
-                       "ORDER BY parentTag, childTag;";  // Only include tags that have children
+    	String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
+                "FROM a_tags t1 " +
+                "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
+                "LEFT JOIN a_tags t2 ON ct.childTag = t2.id " +
+                "WHERE ct.childTag IS NOT NULL " +  // Only include tags that have children
+                "AND t1.id NOT IN (SELECT childTag FROM a_child_tags) " + // Exclude tags that are children themselves
+                "ORDER BY parentTag, childTag;";
 
         List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
 

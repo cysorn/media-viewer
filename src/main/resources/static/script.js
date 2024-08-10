@@ -164,13 +164,24 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// Zoom functionality
+// Function to calculate zoom speed based on current scale
+function calculateDelta(scale) {
+    const baseDelta = 0.1; // Base zoom speed
+    const scaleFactor = 0.3; // Factor by which the zoom speed increases
+    return baseDelta * Math.pow(1 + scaleFactor, scale - 1); // Exponential increase in zoom speed
+}
+
+// Handle zoom functionality
 function handleZoom(event) {
     event.preventDefault(); // Prevent default scroll behavior
-    if (fullscreenElement) {
-        const delta = event.deltaY < 0 ? 0.1 : -0.1; // Zoom in if scroll up, out if scroll down
+
+    // Check if the mouse is not over the tagsManagementContainer
+    if (!tagsManagementContainer.contains(event.target)) {
+        const zoomSpeed = calculateDelta(scale); // Calculate zoom speed based on current scale
+        const delta = event.deltaY < 0 ? zoomSpeed : -zoomSpeed; // Zoom in if scroll up, out if scroll down
+
         scale += delta;
-        scale = Math.max(0.1, Math.min(scale, 5)); // Limit scale between 0.1 and 5
+        scale = Math.max(0.1, Math.min(scale, 10)); // Limit scale between 0.1 and 10
 
         fullscreenElement.style.transform = `scale(${scale})`; // Apply scale transformation
     }

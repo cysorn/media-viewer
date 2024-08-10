@@ -112,6 +112,8 @@ public class AppController {
     	    model.addAttribute("videoFormats", videoFormats);
     	    model.addAttribute("tags", tags);
     	    model.addAttribute("allTags", allTags);
+    	    
+    	    mediaDivContent = getUncategorizedFiles();
 
  
     	    return "index";
@@ -278,12 +280,15 @@ public class AppController {
     	//System.out.println(tagSearchRequest.getSelectedTags());
     	
     	List<String> res = tagSearchRequest.getSelectedTags();
-    	List<String> files = dbSetup.sql.getFilesByTags(res)
-    			.stream()
-                .map(fName -> mediaLocation + fName)
-                .collect(Collectors.toList());
-    	
-    	mediaDivContent = files;
+    	if (!res.get(0).isBlank())
+    	{
+    		List<String> files = dbSetup.sql.getFilesByTags(res)
+    				.stream()
+    				.map(fName -> mediaLocation + fName)
+    				.collect(Collectors.toList());
+    		
+    		mediaDivContent = files;    		
+    	}
     	/*
     	System.out.println(files);
     	model.addAttribute("mediaList", files);
