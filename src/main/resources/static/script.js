@@ -177,8 +177,18 @@ document.addEventListener('keydown', (event) => {
 		        }
 
 	} else if (event.key === 'End' && fullscreenElement) { // Reset zoom and potision
-        navigateMedia(1); // Right arrow for next media
-		navigateMedia(-1); // Left arrow for previous media
+		if (tagsManagementContainer.style.display === 'block') {
+					navigateMedia(1); // Right arrow for next media
+					navigateMedia(-1); // Left arrow for previous media
+		            tagsManagementContainer.style.display = 'block';
+					//prevArrow.style.display = 'none'; // Hide arrows
+					//nextArrow.style.display = 'none';
+		        } else {
+					navigateMedia(1); // Right arrow for next media
+					navigateMedia(-1); // Left arrow for previous media
+		        }
+        
+		
     } else if (event.key === 'Delete' && fullscreenElement && fullscreenElement.tagName === 'VIDEO') {
         fullscreenElement.currentTime = Math.max(0, fullscreenElement.currentTime - 10); // Rewind 10 seconds
     } else if (event.key === 'PageDown' && fullscreenElement && fullscreenElement.tagName === 'VIDEO') {

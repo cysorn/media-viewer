@@ -58,7 +58,10 @@
 			    <button th:each="tag : ${tags}" class="tag-button" th:text="${tag}"></button>
 			</div>
         </div>
-        <button id="confirmButton" class="confirm-button">Confirm</button>
+		<!-- Wrapper for the fixed confirm button -->
+		<div class="confirm-button-wrapper">
+		    <button id="confirmButton" class="confirm-button">Confirm</button>
+		</div>
     </div>
 
     <!-- Arrow navigation buttons -->

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,7 @@ public class AppController {
     private String absoluteUncategorizedLocation;
     private String absoluteMediaFilesLocation;
     private List<String> mediaDivContent;
+    private boolean mediaDivContainsPostRequest = false;
     
     /*
 	AppController(){
@@ -64,11 +66,9 @@ public class AppController {
         this.workingLocation = dbSetup.workingLocation;
         this.absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
         this.absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
-        this.mediaDivContent = getUncategorizedFiles();
-        Collections.shuffle(mediaDivContent);
+
     }
 
-    // 
 	
     @GetMapping("/")
     public String func(Model model) {
@@ -107,6 +107,11 @@ public class AppController {
             Collections.sort(tags);
             
             
+            if(mediaDivContainsPostRequest == false)
+            {
+        	    mediaDivContent = getUncategorizedFiles();
+            }
+
             showTags(model);
             model.addAttribute("mediaList", mediaDivContent);
     	    model.addAttribute("imageFormats", imageFormats);
@@ -114,10 +119,8 @@ public class AppController {
     	    model.addAttribute("tags", tags);
     	    model.addAttribute("allTags", allTags);
     	    
-    	    
-    	    mediaDivContent = getUncategorizedFiles();
-            Collections.shuffle(mediaDivContent);
- 
+    	    mediaDivContainsPostRequest = false;
+
     	    return "index";
     }
     
@@ -165,6 +168,7 @@ public class AppController {
                 }
             }
         }
+        Collections.shuffle(fileNames);
         return fileNames;
     }
 
@@ -276,6 +280,23 @@ public class AppController {
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
     
+    @DeleteMapping("/deleteUncategorizedMedia")
+    public ResponseEntity<String> handleUncategorizedDelete(@RequestBody TagRequest tagRequest) {
+
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/deleteMediaFromGalery")
+    public ResponseEntity<String> handleGaleryDelete(@RequestBody TagRequest tagRequest) {
+
+        // Send a response
+        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+    
+    
+    
+    
     @PostMapping("/sendSearchTags")
     public String handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest, Model model) {
         // Print the raw JSON data
@@ -290,7 +311,8 @@ public class AppController {
     				.collect(Collectors.toList());
     		
             Collections.shuffle(files);
-    		mediaDivContent = files;    		
+    		mediaDivContent = files;
+    		mediaDivContainsPostRequest = true;
     	}
     	/*
     	System.out.println(files);
