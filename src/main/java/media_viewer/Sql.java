@@ -308,20 +308,25 @@ public class Sql {
     
     
     
-    public List<String> getFilesByTags(List<String> tags){
-    	
-    	StringBuilder sql = new StringBuilder();
-    	sql.append("SELECT fileName FROM a_media_files mf ");
-    	for(String tag: tags)
-    	{
-    		sql.append("JOIN files_tagged_");
-    		sql.append(tag);
-    		sql.append(" ON mf.id = files_tagged_");
-    		sql.append(tag);
-    		sql.append(".mediaFile ");
-    	}
-    	
-    	return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> rs.getString("fileName")); 
+    public List<String> getFilesByTags(List<String> tags) {
+        // Base SQL
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT fileName FROM a_media_files mf ");
+        
+        // Add JOINs for each tag
+        for (String tag : tags) {
+            // Sanitize the tag to ensure it's a valid SQL identifier
+            String sanitizedTag = tag.replace("`", "``"); // Escape backticks
+            
+            sql.append("JOIN `files_tagged_")
+               .append(sanitizedTag)
+               .append("` ON mf.id = `files_tagged_")
+               .append(sanitizedTag)
+               .append("`.mediaFile ");
+        }
+        
+        // Execute query
+        return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> rs.getString("fileName"));
     }
     
     
