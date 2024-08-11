@@ -42,9 +42,11 @@ public class AppController {
 
     private String mediaLocation = "/media_files/";
     private String uncategorizedLocation = "/uncategorized/";
+    private String deletedLocation = "/deleted/";
     private String workingLocation;
     private String absoluteUncategorizedLocation;
     private String absoluteMediaFilesLocation;
+    private String absoluteDeletedFilesLocation;
     private List<String> mediaDivContent;
     private boolean mediaDivContainsPostRequest = false;
     
@@ -66,6 +68,7 @@ public class AppController {
         this.workingLocation = dbSetup.workingLocation;
         this.absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
         this.absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
+        this.absoluteDeletedFilesLocation = dbSetup.absoluteDeletedFilesLocation;
 
     }
 
@@ -172,9 +175,9 @@ public class AppController {
         return fileNames;
     }
 
-	private int getNextFreeFileName(){
+	private int getNextFreeFileName(String folderToCheck){
 		
-        File mediaFiles = new File(absoluteMediaFilesLocation);
+        File mediaFiles = new File(folderToCheck);
         int highestFileName = 0;
         int fileNameNumber = 0;
         
@@ -199,14 +202,14 @@ public class AppController {
         return highestFileName + 1;
 	}
 	
-	private String moveFileToMediaFolderAndGetName(File file) throws IOException {
+	private String moveFileFromUncategorizedAndGetName(File file, String targetLocation) throws IOException {
         // Check if file exists
         if (!file.exists()) {
             throw new IOException("File does not exist: " + file.getAbsolutePath());
         }
 
         // Extract the file extension
-        int nextFreeFileName = getNextFreeFileName();
+        int nextFreeFileName = getNextFreeFileName(targetLocation);
         String fileName = file.getName();
         String fileExtension = "";
         int dotIndex = fileName.lastIndexOf('.');
@@ -220,7 +223,7 @@ public class AppController {
         Files.move(file.toPath(), tempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Move the renamed file to the new location
-        Path movedFilePath = Paths.get(absoluteMediaFilesLocation, tempFileName);
+        Path movedFilePath = Paths.get(targetLocation, tempFileName);
         Files.move(tempFilePath, movedFilePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Rename the file to the new name with the original extension
@@ -265,7 +268,7 @@ public class AppController {
 
     	String newFileName;
     	try {
-			newFileName = moveFileToMediaFolderAndGetName(new File(uncatMediaFileName));
+			newFileName = moveFileFromUncategorizedAndGetName(new File(uncatMediaFileName), absoluteMediaFilesLocation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -281,7 +284,19 @@ public class AppController {
     }
     
     @DeleteMapping("/deleteUncategorizedMedia")
-    public ResponseEntity<String> handleUncategorizedDelete(@RequestBody TagRequest tagRequest) {
+    public ResponseEntity<String> handleUncategorizedDelete(@RequestBody UncategorizedDeleteRequect tagRequest) {
+    	
+    	String receivedMediaFileName = tagRequest.getFileLocation();
+    	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
+    	String toDeleteMediaFileName = workingLocation + receivedMediaFileName;
+    	
+    	try {
+			moveFileFromUncategorizedAndGetName(new File( toDeleteMediaFileName), absoluteDeletedFilesLocation);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
@@ -348,6 +363,9 @@ public class AppController {
     }
 	*/
     // Static nested class
+    
+    
+    
     public static class TagRequest  {
 
         private List<String> selectedTags;
@@ -427,6 +445,46 @@ public class AppController {
         @Override
         public String toString() {
 			return "TO_STRING_FUNCTION";
+        }
+    }
+    
+    
+    public static class UncategorizedDeleteRequect{
+        private int currentFileIndex;
+        private String fileLocation;
+
+        // Default constructor
+        public UncategorizedDeleteRequect () {
+        }
+
+        // Parameterized constructor
+        public UncategorizedDeleteRequect (int currentFileIndex, String fileLocation) {
+            this.currentFileIndex = currentFileIndex;
+            this.fileLocation = fileLocation;
+        }
+
+
+        @JsonProperty("currentFileIndex")
+        public int getCurrentFileIndex() {
+            return currentFileIndex;
+        }
+
+        public void setCurrentFileIndex(int currentFileIndex) {
+            this.currentFileIndex = currentFileIndex;
+        }
+        
+        @JsonProperty("fileLocation")
+        public String getFileLocation() {
+            return fileLocation;
+        }
+
+        public void setFileLocation(String fileLocation) {
+            this.fileLocation = fileLocation;
+        }
+
+        @Override
+        public String toString() {
+			return fileLocation+ " " + Integer.toString(currentFileIndex);
         }
     }
 }

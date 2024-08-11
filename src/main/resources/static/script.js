@@ -364,6 +364,7 @@ window.addEventListener('focus', startFocusInterval);
 
 document.addEventListener('DOMContentLoaded', function() {
     const confirmButton = document.getElementById('confirmButton');
+	const deleteButton = document.getElementById('deleteButton');
 	const searchButton = document.getElementById('searchButton');
 	
 	function setAllVideosToLoop() {
@@ -446,6 +447,23 @@ document.addEventListener('DOMContentLoaded', function() {
 			  }
 			}
 			
+			function deleteJson(url, data) {
+			    fetch(url, {
+			        method: 'DELETE',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify(data)
+			    })
+			    .then(response => response.json())
+			    .then(responseData => {
+			        console.log('Success:', responseData);
+			    })
+			    .catch(error => {
+			        console.error('Error:', error);
+			    });
+			}
+			
 			async function postSearchJson(url, data) {
 			  try {
 			    const response = await fetch(url, {
@@ -483,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 	
 			
-    confirmButton.addEventListener('click', function() {
+    	confirmButton.addEventListener('click', function() {
         buttons.forEach(button => {
             // If the button is selected, confirm it; otherwise, remove confirmation
             if (button.classList.contains('selected')) {
@@ -492,6 +510,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList.remove('confirmed');
             }
         });
+		
+
 		
 		// Allow users to unselect confirmed buttons after confirming
         buttons.forEach(button => {
@@ -512,6 +532,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		};
 		postJson(url, data);
     });
+	
+		deleteButton.addEventListener('click', function() {
+
+		const url = '/deleteUncategorizedMedia';
+		const data = {
+		  currentFileIndex: currentIndex,
+		  fileLocation: mediaFiles[currentIndex],
+		};
+		deleteJson(url, data);
+	});
 
 	
 	searchBar.addEventListener('keydown', function(event) {

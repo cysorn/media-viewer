@@ -14,6 +14,7 @@ public class DbSetup1 {
 	String workingLocation = "E:/testing_media_viewer";
 	String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
 	String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
+	String absoluteDeletedFilesLocation = "E:/testing_media_viewer/deleted/";
 	
 	@Autowired
 	Sql sql;

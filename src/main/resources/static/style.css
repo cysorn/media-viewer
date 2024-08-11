@@ -234,23 +234,6 @@ video:not(.full-screen) {
     font-size: 20px;
 }
 
-/* Confirm button */
-.confirm-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #4CAF50; /* Green background */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 20px;
-}
-
-.confirm-button:hover {
-    background-color: #45a049; /* Darker green on hover */
-}
 /* Search button */
 .search-button {
     width: 100%;
@@ -271,13 +254,37 @@ video:not(.full-screen) {
 }
 
 
+.section-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Confirm button */
+.confirm-button {
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    /*margin-top: 10px;*/
+}
+
+.confirm-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
 
 .tags-management-container {
-	position: fixed;
+    position: fixed;
     top: 60px; /* Adjusted to be below the top container, using its height */
     left: 0;
     width: 250px;
-    height: calc(100% - 135px); /* Fill remaining height */
+    height: calc(100% - 115px); /* Fill remaining height */
     background-color: #f4f4f4; /* Light gray background */
     padding: 20px;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
@@ -292,18 +299,47 @@ video:not(.full-screen) {
     bottom: 0;
     left: 0;
     right: 0;
-	width: 230px;
+    width: 230px;
     background-color: #f8f8f8; /* Background color to distinguish the button area */
     padding: 10px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
+    display: flex; /* Use flexbox to align buttons side by side */
+    align-items: center; /* Center items vertically */
 }
 
-.section-header {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: left;
+.confirm-button {
+    width: 94%; /* Increase the width of the confirm button */
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
+.confirm-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
 
+.delete-button {
+    width: 2%; /* Smaller width for the delete button */
+    padding: 10px;
+    font-size: 16px;
+    background-color: #f44336; /* Red background */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center; /* Center the text horizontally */
+    display: flex; /* Flexbox to center the content */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    margin-right: 6%; /* Add margin to increase the distance between the buttons */
+}
 
+.delete-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
