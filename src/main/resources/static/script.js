@@ -208,7 +208,7 @@ document.addEventListener('keydown', (event) => {
 
 // Function to calculate zoom speed based on current scale
 function calculateDelta(scale) {
-    const baseDelta = 0.1; // Base zoom speed
+    const baseDelta = 0.2; // Base zoom speed
     const scaleFactor = 0.3; // Factor by which the zoom speed increases
     return baseDelta * Math.pow(1 + scaleFactor, scale - 1); // Exponential increase in zoom speed
 }
