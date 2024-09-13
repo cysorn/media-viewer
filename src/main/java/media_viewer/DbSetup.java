@@ -23,16 +23,16 @@ public class DbSetup {
 	
 	void setupDb1() {
 		/*
-    	List<String> lis = new ArrayList<>(List.of("general", "rofl", "nerd", "stupid"));
+    	List<String> lis = new ArrayList<>(List.of("general"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
     
-    	lis = new ArrayList<>(List.of("video", "picture"));
+    	lis = new ArrayList<>(List.of("video"));
     	sql.asignChildTags("general", lis);
     	
-    	lis = new ArrayList<>(List.of("lol", "kek"));
-    	sql.addAliases("rofl", lis);
+    	lis = new ArrayList<>(List.of(gif));
+    	sql.addAliases("video", lis);
     	
-    	lis = new ArrayList<>(List.of("nerd", "picture", "rofl"));
+    	lis = new ArrayList<>(List.of("tag"));
     	sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
 		*/
 	}
