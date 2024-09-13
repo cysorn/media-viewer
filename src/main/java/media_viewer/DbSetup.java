@@ -6,18 +6,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import media_viewer.Sql;
+
 @Service
-public class DbSetup1 {
+public class DbSetup {
 	
-	String mediaLocation = "/media_files/";
-	String uncategorizedLocation = "/uncategorized/";
-	String workingLocation = "E:/testing_media_viewer";
-	String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
-	String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
-	String absoluteDeletedFilesLocation = "E:/testing_media_viewer/deleted/";
+	public String mediaLocation = "/media_files/";
+	public String uncategorizedLocation = "/uncategorized/";
+	public String workingLocation = "E:/testing_media_viewer";
+	public String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
+	public String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
+	public String absoluteDeletedFilesLocation = "E:/testing_media_viewer/deleted/";
 	
 	@Autowired
-	Sql sql;
+	public Sql sql;
 	
 	void setupDb1() {
 		/*

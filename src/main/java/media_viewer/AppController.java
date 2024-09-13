@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import media_viewer.DbSetup;
+
 @Controller
 public class AppController {
 
