@@ -131,27 +131,6 @@ public class AppController {
     
     private void showTags(Model model) {
     	
-    	/*
-        // Level 3 (deepest level) buttons
-        List<TagItem> level3List1 = Arrays.asList(
-            new TagItem("Button 1.1.1")
-        );
-
-        // Level 2 buttons with nested level 3
-        List<TagItem> level2List1 = Arrays.asList(
-            new TagItem("Button 1.1", level3List1),
-            new TagItem("Button 1.2")
-        );
-
-        // Level 1 buttons with nested level 2
-        List<TagItem> level1List = Arrays.asList(
-            new TagItem("Button 1", level2List1),
-            new TagItem("Button 2"),
-            new TagItem("Button 3")
-        );
-
-        // Pass the top-level list to the model
-        */
     	List<TagItem> tagItems = dbSetup.sql.getTagHierarchy();
         model.addAttribute("items", tagItems);
     }
@@ -327,32 +306,6 @@ public class AppController {
     	return "index";
     	//return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
-    
-    
-    /*
-    
-    
-    @PostMapping("/sendTags")
-    public ResponseEntity<String> handleTagsPostRequest(@RequestBody String json) {
-        // Print the raw JSON data
-        System.out.println(json);
-        
-        // Send a response
-        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
-    }
-    
-    @PostMapping("/sendSearchTags")
-    public ResponseEntity<String> handleSearchPostRequest(@RequestBody String json) {
-        // Print the raw JSON data
-        System.out.println(json);
-        
-        // Send a response
-        return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
-    }
-	*/
-    // Static nested class
-    
-    
     
     public static class TagRequest  {
 

@@ -24,19 +24,18 @@ public class DbSetup {
 	public void setupDb() {
 		
 		sql.createDbStructureIfNecessary();
-		/*
+
     	List<String> lis = new ArrayList<>(List.of("general"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
     
     	lis = new ArrayList<>(List.of("video"));
     	sql.asignChildTags("general", lis);
     	
-    	lis = new ArrayList<>(List.of(gif));
-    	sql.addAliases("video", lis);
+    	//lis = new ArrayList<>(List.of("gif"));
+    	//sql.addAliases("video", lis);
     	
-    	lis = new ArrayList<>(List.of("tag"));
-    	sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
-		*/
+    	//lis = new ArrayList<>(List.of("tag"));
+    	//sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
 	}
 	
 }
