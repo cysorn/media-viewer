@@ -236,28 +236,14 @@ public class AppController {
         return finalFileName;
     }
 	
-	//ADD HANDLING FOR SECOND EXECUTION.
-    @GetMapping("/hello")
+    @GetMapping("/setupdb")
     @ResponseBody
     public String sayHi() {
     	
     	//setupDb1
     	dbSetup.setupDb();
-    	/*
-    	List<String> lis = new ArrayList<>(List.of("general", "rofl", "nerd", "stupid"));
-    	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
-    
-    	lis = new ArrayList<>(List.of("video", "picture"));
-    	sql.asignChildTags("general", lis);
     	
-    	lis = new ArrayList<>(List.of("lol", "kek"));
-    	sql.addAliases("rofl", lis);
-    	
-    	lis = new ArrayList<>(List.of("nerd", "picture", "rofl"));
-    	sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
-        */
-    	
-        return "Hi";
+        return "DB is ready to work.";
     }
  
     @PostMapping("/sendTags")

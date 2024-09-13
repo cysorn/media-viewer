@@ -21,7 +21,9 @@ public class DbSetup {
 	@Autowired
 	public Sql sql;
 	
-	void setupDb1() {
+	public void setupDb() {
+		
+		sql.createDbStructureIfNecessary();
 		/*
     	List<String> lis = new ArrayList<>(List.of("general"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);

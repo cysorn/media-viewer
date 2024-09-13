@@ -441,4 +441,50 @@ public class Sql {
 	            return new TagItemRow(parentId, parentTag, childId, childTag);
 	        }
 	    }
+	    
+	    //SETUP DB
+	    
+	    
+	    public void createDatabaseIfItDoesNotExist(String dbName) {
+	    	String sql = "SELECT count(SCHEMA_NAME) count FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "';";
+	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+	    	
+	    	if (count == null || count == 0) {
+	    		jdbcTemplate.update("CREATE DATABASE " + dbName + ";");
+	    	}
+	    }
+
+	    public void createTableIfItDoesNotExist(String tableName, String createTableSql) {
+	    	String sql = "SELECT count(table_name) count FROM information_schema.tables WHERE table_schema = 'media_viewer' AND table_name = '" + tableName + "';";
+	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+	    	
+	    	if (count == null || count == 0) {
+	    		jdbcTemplate.update(createTableSql);
+	    	}
+	    } 
+	    
+	    @Transactional
+		public void createDbStructureIfNecessary() {
+	    	
+	    	createDatabaseIfItDoesNotExist("media_viewer");
+	    	
+			String sqlCreateAMediaFiles = "CREATE TABLE `media_viewer`.`a_media_files` (`id` INT NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";
+			createTableIfItDoesNotExist("a_media_files", sqlCreateAMediaFiles);
+			
+			String sqlCreateATags = "CREATE TABLE `media_viewer`.`a_tags` (`id` INT NOT NULL AUTO_INCREMENT , `tag` INT NOT NULL , PRIMARY KEY (`id`), UNIQUE (`tag`)) ENGINE = InnoDB;";
+			createTableIfItDoesNotExist("a_tags", sqlCreateATags);
+			
+			String sqlCreateATagAliases = "CREATE TABLE `media_viewer`.`a_tag_aliases` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `alias` TEXT NOT NULL, PRIMARY KEY (`id`), UNIQUE (`alias`), FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";
+			createTableIfItDoesNotExist("a_tag_aliases", sqlCreateATagAliases);
+			
+			String sqlCreateAChildTags = "CREATE TABLE `media_viewer`.`a_child_tags` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `childTag` INT NOT NULL, PRIMARY KEY (`id`),FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT, FOREIGN KEY (`childTag`) REFERENCES `a_tags`(`id`)  ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";
+			createTableIfItDoesNotExist("a_child_tags", sqlCreateAChildTags);
+		}
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	}
