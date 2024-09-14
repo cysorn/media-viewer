@@ -103,7 +103,7 @@ public class Sql {
     }
     */
     
-    //Executed by admin BY AI
+    //Executed by admin
     @Transactional
     public void asignChildTags(String parent, List<String> children) {
     	List<String> uniqueChildren = new ArrayList<>(new HashSet<>(children));
@@ -449,7 +449,9 @@ public class Sql {
 	    	String sql = "SELECT count(SCHEMA_NAME) count FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "';";
 	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 	    	
+	    	System.out.println(count);
 	    	if (count == null || count == 0) {
+	    		System.out.println("DB CREATED");
 	    		jdbcTemplate.update("CREATE DATABASE " + dbName + ";");
 	    	}
 	    }
@@ -465,13 +467,13 @@ public class Sql {
 	    
 	    @Transactional
 		public void createDbStructureIfNecessary() {
-	    	
+	    	System.out.println("im here");
 	    	createDatabaseIfItDoesNotExist("media_viewer");
 	    	
 			String sqlCreateAMediaFiles = "CREATE TABLE `media_viewer`.`a_media_files` (`id` INT NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";
 			createTableIfItDoesNotExist("a_media_files", sqlCreateAMediaFiles);
 			
-			String sqlCreateATags = "CREATE TABLE `media_viewer`.`a_tags` (`id` INT NOT NULL AUTO_INCREMENT , `tag` INT NOT NULL , PRIMARY KEY (`id`), UNIQUE (`tag`)) ENGINE = InnoDB;";
+			String sqlCreateATags = "CREATE TABLE `media_viewer`.`a_tags` (`id` INT NOT NULL AUTO_INCREMENT , `tag` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE (`tag`)) ENGINE = InnoDB;";
 			createTableIfItDoesNotExist("a_tags", sqlCreateATags);
 			
 			String sqlCreateATagAliases = "CREATE TABLE `media_viewer`.`a_tag_aliases` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `alias` TEXT NOT NULL, PRIMARY KEY (`id`), UNIQUE (`alias`), FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";

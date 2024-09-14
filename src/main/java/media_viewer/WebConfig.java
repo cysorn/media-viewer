@@ -17,9 +17,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Serve files from a directory outside of 'static'
         registry.addResourceHandler("/media_files/**")
-                .addResourceLocations("file:/" + dbSetup.absoluteMediaFilesLocation);
+                .addResourceLocations("file:/" + dbSetup.getAbsoluteMediaFilesLocation());
         
         registry.addResourceHandler("/uncategorized/**")
-        .addResourceLocations("file:/" + dbSetup.absoluteUncategorizedLocation);
+        .addResourceLocations("file:/" + dbSetup.getAbsoluteUncategorizedLocation());
     }
 }

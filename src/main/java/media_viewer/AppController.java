@@ -29,48 +29,29 @@ import media_viewer.DbSetup;
 
 @Controller
 public class AppController {
-
-	/*
-	String mediaLocation = "/media_files/";
-	String uncategorizedLocation = "/uncategorized/";
-	String workingLocation = "E:/testing_media_viewer";
-	String absoluteUncategorizedLocation = "E:/testing_media_viewer/uncategorized/";
-	String absoluteMediaFilesLocation = "E:/testing_media_viewer/media_files/";
-	*/
 	
-	
-	
-	
-
-    private String mediaLocation = "/media_files/";
-    private String uncategorizedLocation = "/uncategorized/";
-    private String deletedLocation = "/deleted/";
+    private String mediaLocation;
+    private String uncategorizedLocation;
+    private String deletedLocation;
     private String workingLocation;
     private String absoluteUncategorizedLocation;
     private String absoluteMediaFilesLocation;
     private String absoluteDeletedFilesLocation;
     private List<String> mediaDivContent;
     private boolean mediaDivContainsPostRequest = false;
-    
-    /*
-	AppController(){
-		mediaLocation = "/media_files/";
-		uncategorizedLocation = "/uncategorized/";
-		workingLocation = dbSetup.workingLocation;
-		absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
-		absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
-	}
-	*/
 	
     private final DbSetup dbSetup;
 
     @Autowired
     public AppController(DbSetup dbSetup) {
         this.dbSetup = dbSetup;
-        this.workingLocation = dbSetup.workingLocation;
-        this.absoluteUncategorizedLocation = dbSetup.absoluteUncategorizedLocation;
-        this.absoluteMediaFilesLocation = dbSetup.absoluteMediaFilesLocation;
-        this.absoluteDeletedFilesLocation = dbSetup.absoluteDeletedFilesLocation;
+        this.workingLocation = dbSetup.getWokringLocation();
+        this.absoluteUncategorizedLocation = dbSetup.getAbsoluteUncategorizedLocation();
+        this.absoluteMediaFilesLocation = dbSetup.getAbsoluteMediaFilesLocation();
+        this.absoluteDeletedFilesLocation = dbSetup.getAbsoluteDeletedFilesLocation();
+        this.mediaLocation = dbSetup.getMediaLocation();
+        this.uncategorizedLocation = dbSetup.getUncategorizedLocation();
+        this.deletedLocation = dbSetup.getAbsoluteDeletedFilesLocation();
 
     }
 
@@ -217,9 +198,9 @@ public class AppController {
 	
     @GetMapping("/setupdb")
     @ResponseBody
-    public String sayHi() {
+    public String setupDb() {
     	
-    	//setupDb1
+    	//setupDb
     	dbSetup.setupDb();
     	
         return "DB is ready to work.";
