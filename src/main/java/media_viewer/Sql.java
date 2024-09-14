@@ -477,8 +477,19 @@ public class Sql {
 			String sqlCreateATagAliases = "CREATE TABLE `media_viewer`.`a_tag_aliases` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `alias` TEXT NOT NULL, PRIMARY KEY (`id`), UNIQUE (`alias`), FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";
 			createTableIfItDoesNotExist("a_tag_aliases", sqlCreateATagAliases);
 			
-			String sqlCreateAChildTags = "CREATE TABLE `media_viewer`.`a_child_tags` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `childTag` INT NOT NULL, PRIMARY KEY (`id`),FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT, FOREIGN KEY (`childTag`) REFERENCES `a_tags`(`id`)  ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";
-			createTableIfItDoesNotExist("a_child_tags", sqlCreateAChildTags);
+			StringBuilder sqlCreateAChildTags = new StringBuilder();
+					
+			sqlCreateAChildTags.append("CREATE TABLE `media_viewer`.`a_child_tags` (");
+			sqlCreateAChildTags.append("`id` INT NOT NULL AUTO_INCREMENT,");
+			sqlCreateAChildTags.append(" `tag` INT NOT NULL,");
+			sqlCreateAChildTags.append(" `childTag` INT NOT NULL,");
+			sqlCreateAChildTags.append(" PRIMARY KEY (`id`),");
+			sqlCreateAChildTags.append(" UNIQUE KEY `unique_tag_childTag` (`tag`, `childTag`),");
+			sqlCreateAChildTags.append(" CONSTRAINT `fk_tag` FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,");
+			sqlCreateAChildTags.append(" CONSTRAINT `fk_childTag` FOREIGN KEY (`childTag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
+			sqlCreateAChildTags.append(") ENGINE=InnoDB;");
+			
+			createTableIfItDoesNotExist("a_child_tags", sqlCreateAChildTags.toString());
 		}
 	    
 	    
