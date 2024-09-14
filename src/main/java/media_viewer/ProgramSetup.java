@@ -1,5 +1,9 @@
 package media_viewer;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class DbSetup {
+public class ProgramSetup {
 	
 	
 	private String workingLocation = "E:/testing_media_viewer";
@@ -24,19 +28,17 @@ public class DbSetup {
 	/*
     @Autowired
     public DbSetup(CustomProperties customProperties) {
-    	System.out.println(customProperties.getWorkinLocationPath());
-        this.workingLocation = customProperties.getWorkinLocationPath();
+    	System.out.println(customProperties.getWorkingLocationPath());
+        this.workingLocation = customProperties.getWorkingLocationPath();
     }
     */
 	
 	@Autowired
 	public Sql sql;
 	
-	public void setupDb() {
+	public StringBuilder setupDb() {
 		
-		System.out.println("in setup db func");
 		sql.createDbStructureIfNecessary();
-		System.out.println("after setup db");
 		
     	List<String> lis = new ArrayList<>(List.of("animals", "ai", "video"));
     	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(lis);
@@ -49,6 +51,30 @@ public class DbSetup {
     	
     	//lis = new ArrayList<>(List.of("tag"));
     	//sql.addOrFindMediaFileAndAsignTagsToIt("1.jpg", lis);
+    	
+    	return new StringBuilder("DB is ready to work.\n");
+	}
+	
+	public String createProgramDirectories() {
+		StringBuilder output = new StringBuilder();
+		output.append(ensurePathIsExisting(absoluteUncategorizedLocation));
+		output.append(ensurePathIsExisting(absoluteMediaFilesLocation));
+		output.append(ensurePathIsExisting(absoluteDeletedFilesLocation));
+		
+		return output.toString();
+	}
+	
+	private String ensurePathIsExisting(String path) {
+		Path folderPath = Paths.get(path);
+
+        try {
+            // Create the directory
+            Files.createDirectories(folderPath);
+            return path + " is prepared!\n";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Failed to create " + path;
+        }
 	}
 
 	public String getWokringLocation() {

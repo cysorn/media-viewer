@@ -445,13 +445,12 @@ public class Sql {
 	    //SETUP DB
 	    
 	    
+
 	    public void createDatabaseIfItDoesNotExist(String dbName) {
 	    	String sql = "SELECT count(SCHEMA_NAME) count FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "';";
 	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 	    	
-	    	System.out.println(count);
 	    	if (count == null || count == 0) {
-	    		System.out.println("DB CREATED");
 	    		jdbcTemplate.update("CREATE DATABASE " + dbName + ";");
 	    	}
 	    }
@@ -467,7 +466,6 @@ public class Sql {
 	    
 	    @Transactional
 		public void createDbStructureIfNecessary() {
-	    	System.out.println("im here");
 	    	createDatabaseIfItDoesNotExist("media_viewer");
 	    	
 			String sqlCreateAMediaFiles = "CREATE TABLE `media_viewer`.`a_media_files` (`id` INT NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";

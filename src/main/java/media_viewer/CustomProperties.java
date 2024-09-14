@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 public class CustomProperties {
 
     @Value("${custom.workingLocationPath}")
-    private String url;
+    private String path;
 
     public String getWorkingLocationPath() {
-        return url;
+        return path;
     }
 }

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import media_viewer.DbSetup;
+import media_viewer.ProgramSetup;
 
 @Controller
 public class AppController {
@@ -40,18 +40,18 @@ public class AppController {
     private List<String> mediaDivContent;
     private boolean mediaDivContainsPostRequest = false;
 	
-    private final DbSetup dbSetup;
+    private final ProgramSetup pSetup;
 
     @Autowired
-    public AppController(DbSetup dbSetup) {
-        this.dbSetup = dbSetup;
-        this.workingLocation = dbSetup.getWokringLocation();
-        this.absoluteUncategorizedLocation = dbSetup.getAbsoluteUncategorizedLocation();
-        this.absoluteMediaFilesLocation = dbSetup.getAbsoluteMediaFilesLocation();
-        this.absoluteDeletedFilesLocation = dbSetup.getAbsoluteDeletedFilesLocation();
-        this.mediaLocation = dbSetup.getMediaLocation();
-        this.uncategorizedLocation = dbSetup.getUncategorizedLocation();
-        this.deletedLocation = dbSetup.getAbsoluteDeletedFilesLocation();
+    public AppController(ProgramSetup pSetup) {
+        this.pSetup = pSetup;
+        this.workingLocation = pSetup.getWokringLocation();
+        this.absoluteUncategorizedLocation = pSetup.getAbsoluteUncategorizedLocation();
+        this.absoluteMediaFilesLocation = pSetup.getAbsoluteMediaFilesLocation();
+        this.absoluteDeletedFilesLocation = pSetup.getAbsoluteDeletedFilesLocation();
+        this.mediaLocation = pSetup.getMediaLocation();
+        this.uncategorizedLocation = pSetup.getUncategorizedLocation();
+        this.deletedLocation = pSetup.getAbsoluteDeletedFilesLocation();
 
     }
 
@@ -81,13 +81,13 @@ public class AppController {
     		    ".avi",    // AVI (supported in some browsers with limited compatibility)
     		    ".3gp"     // 3GPP (supported in most modern browsers)
     		);
-    	    List<String> tags = dbSetup.sql.getTagsWithNoFamilyRelations().stream()
+    	    List<String> tags = pSetup.sql.getTagsWithNoFamilyRelations().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
             
             
-            List<String> allTags = dbSetup.sql.getTags().stream()
+            List<String> allTags = pSetup.sql.getTags().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
@@ -112,7 +112,7 @@ public class AppController {
     
     private void showTags(Model model) {
     	
-    	List<TagItem> tagItems = dbSetup.sql.getTagHierarchy();
+    	List<TagItem> tagItems = pSetup.sql.getTagHierarchy();
         model.addAttribute("items", tagItems);
     }
     
@@ -196,14 +196,17 @@ public class AppController {
         return finalFileName;
     }
 	
-    @GetMapping("/setupdb")
+    @GetMapping("/setup")
     @ResponseBody
-    public String setupDb() {
+    public String setupProgram() {
     	
     	//setupDb
-    	dbSetup.setupDb();
     	
-        return "DB is ready to work.";
+    	StringBuilder output = pSetup.setupDb();
+    	
+    	output.append(pSetup.createProgramDirectories());
+    	
+        return output.toString().replace("\n", "<br/>");
     }
  
     @PostMapping("/sendTags")
@@ -225,7 +228,7 @@ public class AppController {
     	//System.out.println(tagRequest.getCurrentFileIndex());
     	//System.out.println(tagRequest.getSelectedTags());
     	//System.out.println(tagRequest.getFileLocation());
-    	dbSetup.sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
+    	pSetup.sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
@@ -268,7 +271,7 @@ public class AppController {
     	List<String> res = tagSearchRequest.getSelectedTags();
     	if (!res.get(0).isBlank())
     	{
-    		List<String> files = dbSetup.sql.getFilesByTags(res)
+    		List<String> files = pSetup.sql.getFilesByTags(res)
     				.stream()
     				.map(fName -> mediaLocation + fName)
     				.collect(Collectors.toList());
