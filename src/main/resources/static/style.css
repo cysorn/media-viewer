@@ -23,7 +23,7 @@ html, body {
 .top-container {
     width: 100%;
     padding: 10px 20px;  /* Reduced padding to restore original height */
-    background-color: #4CAF50; /* Green background */
+    background-color: #bfb006;
     color: white;
     display: flex;
     align-items: center;
@@ -239,7 +239,7 @@ video:not(.full-screen) {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #4CAF50; /* Green background */
+    background-color: #bfb006;
     color: white;
     border: none;
     border-radius: 4px;
@@ -250,7 +250,7 @@ video:not(.full-screen) {
 }
 
 .search-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #918606; /* Darker button on hover */
 }
 
 
