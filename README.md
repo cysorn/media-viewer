@@ -1,6 +1,6 @@
 # Media-Viewer 
 
-**Media-Viewer** is a program for managing videos and images in various formats. The goal of this project was to achieve the targeted functionality as quickly as possible, which influenced the decision to use AI for generating the frontend. The program provides a simple way to organize media files locally without relying on complex folder structures. It includes a fast, tag-based search engine, allowing users to quickly locate files even in large collections. Media-Viewer runs a local server using Spring Boot, enabling file management and browsing through a web interface. 
+**Media-Viewer** is a program for managing videos and images in various formats. The goal of this project was to achieve the targeted functionality as quickly as possible, which influenced the decision to use AI for creating the frontend. The program provides a simple way to organize media files locally without relying on complex folder structures. It includes a fast, tag-based search engine, allowing users to quickly locate files even in large collections. Media-Viewer runs a local server using Spring Boot, enabling file management and browsing through a web interface. 
 
 ## Features 
 - View media files
