@@ -8,11 +8,6 @@ public class TagSearchRequest  {
 
 	private List<String> selectedTags;
 
-    // Default constructor
-    public TagSearchRequest () {
-    }
-    
-    // Parameterized constructor
     public TagSearchRequest (List<String> selectedTags) {
         this.selectedTags = selectedTags;
     }

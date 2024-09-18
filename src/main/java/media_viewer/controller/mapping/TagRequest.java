@@ -10,11 +10,6 @@ public class TagRequest  {
     private int currentFileIndex;
     private String fileLocation;
 
-    // Default constructor
-    public TagRequest () {
-    }
-
-    // Parameterized constructor
     public TagRequest (List<String> selectedTags, int currentFileIndex, String fileLocation) {
         this.selectedTags = selectedTags;
         this.currentFileIndex = currentFileIndex;

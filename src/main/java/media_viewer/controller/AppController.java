@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import media_viewer.ProgramSetup;
 import media_viewer.controller.mapping.TagRequest;
 import media_viewer.controller.mapping.TagSearchRequest;
-import media_viewer.controller.mapping.UncategorizedDeleteRequect;
+import media_viewer.controller.mapping.UncategorizedDeleteRequest;
 import media_viewer.database.Sql;
 import media_viewer.database.mapping.TagItem;
 import media_viewer.file_system.FileSystem;
@@ -162,7 +162,7 @@ public class AppController {
     }
     
     @DeleteMapping("/deleteUncategorizedMedia")
-    public ResponseEntity<String> handleUncategorizedDelete(@RequestBody UncategorizedDeleteRequect tagRequest) {
+    public ResponseEntity<String> handleUncategorizedDelete(@RequestBody UncategorizedDeleteRequest tagRequest) {
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
     	String toDeleteMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;

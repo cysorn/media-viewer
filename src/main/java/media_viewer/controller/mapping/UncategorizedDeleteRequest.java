@@ -2,16 +2,11 @@ package media_viewer.controller.mapping;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UncategorizedDeleteRequect{
+public class UncategorizedDeleteRequest{
     private int currentFileIndex;
     private String fileLocation;
 
-    // Default constructor
-    public UncategorizedDeleteRequect () {
-    }
-
-    // Parameterized constructor
-    public UncategorizedDeleteRequect (int currentFileIndex, String fileLocation) {
+    public UncategorizedDeleteRequest (int currentFileIndex, String fileLocation) {
         this.currentFileIndex = currentFileIndex;
         this.fileLocation = fileLocation;
     }
