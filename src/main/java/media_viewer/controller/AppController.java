@@ -1,4 +1,4 @@
-package media_viewer;
+package media_viewer.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import media_viewer.ProgramSetup;
+import media_viewer.controller.mapping.TagRequest;
+import media_viewer.controller.mapping.TagSearchRequest;
+import media_viewer.controller.mapping.UncategorizedDeleteRequect;
 import media_viewer.database.Sql;
+import media_viewer.database.mapping.TagItem;
 import media_viewer.file_system.FileSystem;
 
 
@@ -68,6 +71,23 @@ public class AppController {
     		    ".3gp"     // 3GPP (supported in most modern browsers)
     		);
     }
+    
+    
+
+    //FIXME
+    @GetMapping("/error")
+    @ResponseBody
+    public String errorFunc() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("Troubleshooting:\n");
+    	sb.append("1. Open application.properties and ensure that you specified custom.workingLocationPath.\n");
+    	sb.append("2. Make sure your database is running and that the credentials are correct.\n");
+    	sb.append("3. Open localhost:8080/setup; it should display a message indicating that everything is set up.\n");
+    	sb.append("4. Try to open localhost:8080 again\n");
+    	
+    	return prepareStringToDisplayOnPage(sb.toString());
+    }
+    
 	
     @GetMapping("/")
     public String func(Model model) {
@@ -110,21 +130,22 @@ public class AppController {
     @ResponseBody
     public String setupProgram() {
     	
-    	//setupDb
-    	
     	StringBuilder output = pSetup.setupDb();
     	
     	output.append(fileSystem.createProgramDirectories());
     	
-        return output.toString().replace("\n", "<br/>");
+        return prepareStringToDisplayOnPage(output.toString());
     }
- 
+    
+    private String prepareStringToDisplayOnPage(String str) {
+    	return str.replace("\n", "<br/>");
+    }
+    
+    
     @PostMapping("/sendTags")
     public ResponseEntity<String> handleTagsPostRequest(@RequestBody TagRequest tagRequest) {
-        // Print the raw JSON data
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
-    	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
     	String uncatMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;
 
     	String newFileName;
@@ -136,8 +157,7 @@ public class AppController {
 		}
     	
     	sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
-        
-        // Send a response
+
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
     
@@ -145,7 +165,6 @@ public class AppController {
     public ResponseEntity<String> handleUncategorizedDelete(@RequestBody UncategorizedDeleteRequect tagRequest) {
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
-    	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
     	String toDeleteMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;
     	
     	try {
@@ -155,15 +174,13 @@ public class AppController {
 			e.printStackTrace();
 			return null;
 		}
-
-        // Send a response
+    	
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
     
-    @DeleteMapping("/deleteMediaFromGalery")
+    @DeleteMapping("/deleteMediaFromGallery")
     public ResponseEntity<String> handleGaleryDelete(@RequestBody TagRequest tagRequest) {
 
-        // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
     
@@ -184,136 +201,8 @@ public class AppController {
     		mediaDivContent = files;
     		mediaDivContainsPostRequest = true;
     	}
-    	/*
-    	System.out.println(files);
-    	model.addAttribute("mediaList", files);
-    	System.out.println("Attribute: " + model.getAttribute("mediaList"));
-       */
     	
-        // Send a response
     	return "index";
     	//return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
-    }
-    
-    public static class TagRequest  {
-
-        private List<String> selectedTags;
-        private int currentFileIndex;
-        private String fileLocation;
-
-        // Default constructor
-        public TagRequest () {
-        }
-
-        // Parameterized constructor
-        public TagRequest (List<String> selectedTags, int currentFileIndex, String fileLocation) {
-            this.selectedTags = selectedTags;
-            this.currentFileIndex = currentFileIndex;
-            this.fileLocation = fileLocation;
-        }
-
-        // Getters and Setters
-        @JsonProperty("selectedTags")
-        public List<String> getSelectedTags() {
-            return selectedTags;
-        }
-
-        public void setSelectedTags(List<String> selectedTags) {
-            this.selectedTags = selectedTags;
-        }
-
-        @JsonProperty("currentFileIndex")
-        public int getCurrentFileIndex() {
-            return currentFileIndex;
-        }
-
-        public void setCurrentFileIndex(int currentFileIndex) {
-            this.currentFileIndex = currentFileIndex;
-        }
-        
-        @JsonProperty("fileLocation")
-        public String getFileLocation() {
-            return fileLocation;
-        }
-
-        public void setFileLocation(String fileLocation) {
-            this.fileLocation = fileLocation;
-        }
-
-        @Override
-        public String toString() {
-			return "TO_STRING_FUNCTION";
-        }
-    }
-    
-    // Static nested class
-    public static class TagSearchRequest  {
-
-    	private List<String> selectedTags;
-
-        // Default constructor
-        public TagSearchRequest () {
-        }
-        
-        // Parameterized constructor
-        public TagSearchRequest (List<String> selectedTags) {
-            this.selectedTags = selectedTags;
-        }
-
-        // Getters and Setters
-        
-        @JsonProperty("selectedTags")
-        public List<String> getSelectedTags() {
-            return selectedTags;
-        }
-
-        public void setSelectedTags(List<String> selectedTags) {
-            this.selectedTags = selectedTags;
-        }
-
-        @Override
-        public String toString() {
-			return "TO_STRING_FUNCTION";
-        }
-    }
-    
-    
-    public static class UncategorizedDeleteRequect{
-        private int currentFileIndex;
-        private String fileLocation;
-
-        // Default constructor
-        public UncategorizedDeleteRequect () {
-        }
-
-        // Parameterized constructor
-        public UncategorizedDeleteRequect (int currentFileIndex, String fileLocation) {
-            this.currentFileIndex = currentFileIndex;
-            this.fileLocation = fileLocation;
-        }
-
-
-        @JsonProperty("currentFileIndex")
-        public int getCurrentFileIndex() {
-            return currentFileIndex;
-        }
-
-        public void setCurrentFileIndex(int currentFileIndex) {
-            this.currentFileIndex = currentFileIndex;
-        }
-        
-        @JsonProperty("fileLocation")
-        public String getFileLocation() {
-            return fileLocation;
-        }
-
-        public void setFileLocation(String fileLocation) {
-            this.fileLocation = fileLocation;
-        }
-
-        @Override
-        public String toString() {
-			return fileLocation+ " " + Integer.toString(currentFileIndex);
-        }
     }
 }

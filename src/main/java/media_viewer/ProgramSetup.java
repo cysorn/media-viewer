@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import media_viewer.database.Sql;
-import media_viewer.file_system.FileSystem;
 
 
 @Service
@@ -17,7 +16,7 @@ public class ProgramSetup {
 	private Sql sql;
 	
 	public StringBuilder setupDb() {
-		
+
 		sql.createDbStructureIfNecessary();
 		
     	List<String> lis = new ArrayList<>(List.of("animals", "ai", "video"));
@@ -34,5 +33,4 @@ public class ProgramSetup {
     	
     	return new StringBuilder("DB is ready to work.\n");
 	}
-	
 }

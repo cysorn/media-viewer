@@ -1,4 +1,4 @@
-package media_viewer;
+package media_viewer.database.mapping;
 
 import java.util.ArrayList;
 import java.util.List;

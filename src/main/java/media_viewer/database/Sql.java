@@ -1,7 +1,5 @@
 package media_viewer.database;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import media_viewer.TagItem;
-
+import media_viewer.database.mapping.TagItem;
+import media_viewer.database.mapping.TagItemRow;
+import media_viewer.database.mapping.TagItemRowMapper;
 
 @Component
 public class Sql {
@@ -78,7 +76,6 @@ public class Sql {
         }
     }
     
-    //Executed by admin
     @Transactional
     public void asignChildTags(String parent, List<String> children) {
     	List<String> uniqueChildren = new ArrayList<>(new HashSet<>(children));
@@ -98,9 +95,6 @@ public class Sql {
         jdbcTemplate.update(sql.toString());
     }
     
-
-    
-    //Executed by admin
     @Transactional
     public void extendTagsTableAndCreateFileTagsTablesIfNecessary(List<String> tags) {
         // Remove duplicates from the input list by converting it to a Set and back to a List
@@ -143,27 +137,21 @@ public class Sql {
         }
     }
     
-   
-    //Executed by the admin
     @Transactional
     public void addAliases(String tag, List<String> aliases) {
         // Remove duplicates from the input list
         List<String> uniqueAliases = new ArrayList<>(new HashSet<>(aliases));
         
-     // Construct the SQL query to check for existing aliases in the a_tags table
         String sqlAliasCheck = "SELECT tag FROM a_tags WHERE tag IN (" 
                               + uniqueAliases.stream().map(alias -> "'" + alias + "'").collect(Collectors.joining(", ")) 
                               + ")";
 
-        // Query the database for existing tags
-        List<String> existingTags = jdbcTemplate.queryForList(sqlAliasCheck, String.class);
 
-        // If any aliases are found in the a_tags table, throw an exception
+        List<String> existingTags = jdbcTemplate.queryForList(sqlAliasCheck, String.class);
         if (!existingTags.isEmpty()) {
             throw new IllegalArgumentException("The following aliases are already used as tags: " + existingTags);
         }
 
-        // Construct the SQL query to check for existing aliases in the database
         String sqlCheck = "SELECT alias FROM a_tag_aliases WHERE tag = (SELECT id FROM a_tags WHERE tag = '" 
                           + tag + "') AND alias IN (" 
                           + uniqueAliases.stream().map(alias -> "'" + alias + "'").collect(Collectors.joining(", ")) 
@@ -192,7 +180,6 @@ public class Sql {
 
             sql.append(") AS aliases;");
 
-            // Execute the SQL query
             jdbcTemplate.update(sql.toString());
         }
     }
@@ -235,7 +222,6 @@ public class Sql {
                .append("`.mediaFile ");
         }
         
-        // Execute query
         return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> rs.getString("fileName"));
     }
     
@@ -262,7 +248,7 @@ public class Sql {
                        "WHERE ct.childTag IS NOT NULL " + 
                        "ORDER BY parentTag, childTag;";  // Only include tags that have children
 
-        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper());
+        List<TagItemRow> rows = jdbcTemplate.query(query, new TagItemRowMapper()); 
 
         // Maps to store tags and their children
         Map<Integer, TagItem> tagMap = new HashMap<>();
@@ -306,98 +292,42 @@ public class Sql {
                 })
                 .collect(Collectors.toList());
         
-        return result;  // Return only parent tags with children
+        return result;
     }
 	
-	    private static class TagItemRow {
-	        private final int parentId;
-	        private final String parentTag;
-	        private final Integer childId;
-	        private final String childTag;
-	
-	        public TagItemRow(int parentId, String parentTag, Integer childId, String childTag) {
-	            this.parentId = parentId;
-	            this.parentTag = parentTag;
-	            this.childId = childId;
-	            this.childTag = childTag;
-	        }
-	
-	        public int getParentId() {
-	            return parentId;
-	        }
-	
-	        public String getParentTag() {
-	            return parentTag;
-	        }
-	
-	        public Integer getChildId() {
-	            return childId;
-	        }
-	
-	        public String getChildTag() {
-	            return childTag;
-	        }
-	    }
-	
-	    private static class TagItemRowMapper implements RowMapper<TagItemRow> {
-	        @Override
-	        public TagItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-	            int parentId = rs.getInt("parentId");
-	            String parentTag = rs.getString("parentTag");
-	            Integer childId = (rs.getObject("childId") != null) ? rs.getInt("childId") : null;
-	            String childTag = (rs.getObject("childTag") != null) ? rs.getString("childTag") : null;
-	            return new TagItemRow(parentId, parentTag, childId, childTag);
-	        }
-	    }
-	    
-	    //SETUP DB
-	    
-	    
+    //SETUP DB
 
-	    public void createDatabaseIfItDoesNotExist(String dbName) {
-	    	String sql = "SELECT count(SCHEMA_NAME) count FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + dbName + "';";
-	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
-	    	
-	    	if (count == null || count == 0) {
-	    		jdbcTemplate.update("CREATE DATABASE " + dbName + ";");
-	    	}
-	    }
-
-	    public void createTableIfItDoesNotExist(String tableName, String createTableSql) {
-	    	String sql = "SELECT count(table_name) count FROM information_schema.tables WHERE table_schema = 'media_viewer' AND table_name = '" + tableName + "';";
-	    	Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
-	    	
-	    	if (count == null || count == 0) {
-	    		jdbcTemplate.update(createTableSql);
-	    	}
-	    } 
-	    
-	    @Transactional
-		public void createDbStructureIfNecessary() {
-	    	//FIXME
-	    	createDatabaseIfItDoesNotExist("media_viewer");
-	    	
-			String sqlCreateAMediaFiles = "CREATE TABLE `media_viewer`.`a_media_files` (`id` INT NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";
-			createTableIfItDoesNotExist("a_media_files", sqlCreateAMediaFiles);
-			
-			String sqlCreateATags = "CREATE TABLE `media_viewer`.`a_tags` (`id` INT NOT NULL AUTO_INCREMENT , `tag` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE (`tag`)) ENGINE = InnoDB;";
-			createTableIfItDoesNotExist("a_tags", sqlCreateATags);
-			
-			String sqlCreateATagAliases = "CREATE TABLE `media_viewer`.`a_tag_aliases` (`id` INT NOT NULL AUTO_INCREMENT, `tag` INT NOT NULL, `alias` TEXT NOT NULL, PRIMARY KEY (`id`), UNIQUE (`alias`), FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;";
-			createTableIfItDoesNotExist("a_tag_aliases", sqlCreateATagAliases);
-			
-			StringBuilder sqlCreateAChildTags = new StringBuilder();
+	@Transactional
+	public void createDbStructureIfNecessary() {
+		//FIXME
+		String sqlCreateDatabase = "CREATE DATABASE IF NOT EXISTS media_viewer";
+		jdbcTemplate.update(sqlCreateDatabase);
+			    	
+		String sqlCreateAMediaFiles = "CREATE TABLE IF NOT EXISTS media_viewer.a_media_files (id INT NOT NULL AUTO_INCREMENT , fileName TEXT NOT NULL , PRIMARY KEY (id)) ENGINE = InnoDB;";
 					
-			sqlCreateAChildTags.append("CREATE TABLE `media_viewer`.`a_child_tags` (");
-			sqlCreateAChildTags.append("`id` INT NOT NULL AUTO_INCREMENT,");
-			sqlCreateAChildTags.append(" `tag` INT NOT NULL,");
-			sqlCreateAChildTags.append(" `childTag` INT NOT NULL,");
-			sqlCreateAChildTags.append(" PRIMARY KEY (`id`),");
-			sqlCreateAChildTags.append(" UNIQUE KEY `unique_tag_childTag` (`tag`, `childTag`),");
-			sqlCreateAChildTags.append(" CONSTRAINT `fk_tag` FOREIGN KEY (`tag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,");
-			sqlCreateAChildTags.append(" CONSTRAINT `fk_childTag` FOREIGN KEY (`childTag`) REFERENCES `a_tags`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
-			sqlCreateAChildTags.append(") ENGINE=InnoDB;");
-			
-			createTableIfItDoesNotExist("a_child_tags", sqlCreateAChildTags.toString());
-		}
+		String sqlCreateATags = "CREATE TABLE IF NOT EXISTS media_viewer.a_tags (id INT NOT NULL AUTO_INCREMENT , tag TEXT NOT NULL , PRIMARY KEY (id), UNIQUE (tag)) ENGINE = InnoDB;";
+					
+		StringBuilder sqlCreateATagAliases = new StringBuilder();
+		sqlCreateATagAliases.append("CREATE TABLE IF NOT EXISTS media_viewer.a_tag_aliases");
+		sqlCreateATagAliases.append("(id INT NOT NULL AUTO_INCREMENT, tag INT NOT NULL, alias TEXT NOT NULL,");
+		sqlCreateATagAliases.append("PRIMARY KEY (id), UNIQUE (alias), FOREIGN KEY (tag)");
+		sqlCreateATagAliases.append("REFERENCES a_tags(id) ON DELETE RESTRICT ON UPDATE RESTRICT) ENGINE = InnoDB;");
+					
+		StringBuilder sqlCreateAChildTags = new StringBuilder();
+							
+		sqlCreateAChildTags.append("CREATE TABLE IF NOT EXISTS media_viewer.a_child_tags (");
+		sqlCreateAChildTags.append("id INT NOT NULL AUTO_INCREMENT,");
+		sqlCreateAChildTags.append(" tag INT NOT NULL,");
+		sqlCreateAChildTags.append(" childTag INT NOT NULL,");
+		sqlCreateAChildTags.append(" PRIMARY KEY (id),");
+		sqlCreateAChildTags.append(" UNIQUE KEY unique_tag_childTag (tag, childTag),");
+		sqlCreateAChildTags.append(" CONSTRAINT fk_tag FOREIGN KEY (tag) REFERENCES a_tags(id) ON DELETE RESTRICT ON UPDATE RESTRICT,");
+		sqlCreateAChildTags.append(" CONSTRAINT fk_childTag FOREIGN KEY (childTag) REFERENCES a_tags(id) ON DELETE RESTRICT ON UPDATE RESTRICT");
+		sqlCreateAChildTags.append(") ENGINE=InnoDB;");
+					
+		jdbcTemplate.update(sqlCreateAMediaFiles);
+		jdbcTemplate.update(sqlCreateATags);
+		jdbcTemplate.update(sqlCreateATagAliases.toString());
+		jdbcTemplate.update(sqlCreateAChildTags.toString());
 	}
+}
