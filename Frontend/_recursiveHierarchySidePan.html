@@ -1,0 +1,12 @@
+<!-- _recursiveHierarchy.html -->
+<div th:fragment="hierarchyFragment(items, depth)">
+    <div th:each="item, iterStat : ${items}">
+        <!-- The button retains its class and style -->
+        <button class="hierarchy-button tag-item" style="font-size: 20px" th:text="${item.name}"></button>
+        
+        <!-- Apply the same classes to the div to ensure JS applies similarly -->
+        <div class="hierarchy-button tag-item child-buttons tags-list" th:if="${item.subItems != null}">
+            <div th:replace="~{_recursiveHierarchy :: hierarchyFragment(${item.subItems}, ${depth + 1})}"></div>
+        </div>
+    </div>
+</div>
