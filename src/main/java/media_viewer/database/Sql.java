@@ -1,4 +1,4 @@
-package media_viewer;
+package media_viewer.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,13 +15,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import media_viewer.TagItem;
 
 
-@Service
+@Component
 public class Sql {
 	
     @Autowired
@@ -29,14 +29,6 @@ public class Sql {
     
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    /*
-    public void addMediaFile(String mediaFileName) {
-        String sql = "INSERT INTO `media_files`(`" + mediaFileName + "`) VALUES ('')";
-        int result = jdbcTemplate.queryForObject(sql, Integer.class);
-        System.out.println("Database connection test result: " + result);
-    }
-    */
     
     //Done after POST request
     private Integer addOrFindMediaFileAndGetId(String mediaFileName) {
@@ -85,23 +77,6 @@ public class Sql {
             }
         }
     }
-    
-    
-    
-  //Executed by admin
-    /*
-    @Transactional
-    public void addChildTags(String parent, List<String> children) {
-    	String sql = "SELECT id FROM a_tags WHERE tag = " + parent + ";";
-    	int parentTagId = jdbcTemplate.queryForObject(sql, Integer.class);
-    	
-    	StringBuilder sqlChildren = new StringBuilder();
-    	for(String child: children) {
-    		sqlChildren.append("INSERT INTO `a_child_tags`(`tag`, `childTag`) VALUES ('" + parentTagId + "','" + child + "');");
-    	}
-    	jdbcTemplate.update(sqlChildren.toString());
-    }
-    */
     
     //Executed by admin
     @Transactional
@@ -167,30 +142,6 @@ public class Sql {
             create_files_tagged_table(tag);
         }
     }
-    
-    /*
-    
-    private Integer addTag(String tag) {
-        String sql = "INSERT INTO `a_tags`(`tag`) VALUES ('" + tag + "');";
-        jdbcTemplate.update(sql.toString());
-        sql = "SELECT LAST_INSERT_ID()";
-    	return jdbcTemplate.queryForObject(sql, Integer.class);
-    }
-    
-    //Executed by the file indexing
-    private Integer addTagAndGetId(String tag) {
-        String sql = "INSERT INTO `a_tags`(`tag`) VALUES ('" + tag + "');";
-        jdbcTemplate.update(sql.toString());
-        sql = "SELECT LAST_INSERT_ID()";
-    	return jdbcTemplate.queryForObject(sql, Integer.class);
-    }
-    */
-    
-    
-    
-    
-    
-    
     
    
     //Executed by the admin
@@ -265,49 +216,6 @@ public class Sql {
     	String sql = "SELECT t.tag FROM `a_tags` t WHERE t.id NOT IN (SELECT tag FROM `a_child_tags`) AND t.id NOT IN (SELECT childTag FROM `a_child_tags`);";
     	return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("tag")); 
     }
-    /*
-    //AI Version
-    public void addAliases(String tag, List<String> aliases) {
-        if (!aliases.isEmpty()) {
-            String sqlTemplate = "INSERT INTO a_tag_aliases (tag, alias) SELECT id, '%s' FROM a_tags WHERE tag = '%s';";
-            StringBuilder sql = new StringBuilder();
-
-            for (String alias : aliases) {
-                sql.append(String.format(sqlTemplate, alias, tag));
-            }
-
-            // Execute the combined SQL statements as a single batch update
-            jdbcTemplate.update(sql.toString());
-        }
-    }
-    */
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
-    public List<String> getExcludedFromIndexingRelativePaths() {
-        String sql = "SELECT storageRelativePath FROM categories";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("storageRelativePath"));
-    }
-    */
-    //Triggered via POST request from user
-    
-    
-    /*
-    
-    public void assignTagsToMediaFile(String mediaFileName, List<String> tags) {
-    	int mediaFileId = addMediaFileAndGetId(mediaFileName);
-    }*/
-    
     
     
     public List<String> getFilesByTags(List<String> tags) {
@@ -466,6 +374,7 @@ public class Sql {
 	    
 	    @Transactional
 		public void createDbStructureIfNecessary() {
+	    	//FIXME
 	    	createDatabaseIfItDoesNotExist("media_viewer");
 	    	
 			String sqlCreateAMediaFiles = "CREATE TABLE `media_viewer`.`a_media_files` (`id` INT NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";
@@ -491,11 +400,4 @@ public class Sql {
 			
 			createTableIfItDoesNotExist("a_child_tags", sqlCreateAChildTags.toString());
 		}
-	    
-	    
-	    
-	    
-	    
-	    
-	    
 	}

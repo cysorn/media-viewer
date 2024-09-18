@@ -2,11 +2,6 @@ package media_viewer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,42 +20,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import media_viewer.ProgramSetup;
+import media_viewer.database.Sql;
+import media_viewer.file_system.FileSystem;
+
 
 @Controller
 public class AppController {
 	
-    private String mediaLocation;
-    private String uncategorizedLocation;
-    private String deletedLocation;
-    private String workingLocation;
-    private String absoluteUncategorizedLocation;
-    private String absoluteMediaFilesLocation;
-    private String absoluteDeletedFilesLocation;
+	@Autowired
+	private Sql sql;
+	
+	@Autowired
+	private FileSystem fileSystem;
+	
     private List<String> mediaDivContent;
     private boolean mediaDivContainsPostRequest = false;
 	
     private final ProgramSetup pSetup;
+    
+    private List<String> imageFormats;
+    private List<String> videoFormats;
 
     @Autowired
     public AppController(ProgramSetup pSetup) {
+
         this.pSetup = pSetup;
-        this.workingLocation = pSetup.getWokringLocation();
-        this.absoluteUncategorizedLocation = pSetup.getAbsoluteUncategorizedLocation();
-        this.absoluteMediaFilesLocation = pSetup.getAbsoluteMediaFilesLocation();
-        this.absoluteDeletedFilesLocation = pSetup.getAbsoluteDeletedFilesLocation();
-        this.mediaLocation = pSetup.getMediaLocation();
-        this.uncategorizedLocation = pSetup.getUncategorizedLocation();
-        this.deletedLocation = pSetup.getAbsoluteDeletedFilesLocation();
-
-    }
-
-	
-    @GetMapping("/")
-    public String func(Model model) {
-
-
-    	List<String> imageFormats = Arrays.asList(
+        
+    	imageFormats = Arrays.asList(
     		    ".png",   // Portable Network Graphics
     		    ".jpg",   // JPEG Image
     		    ".jpeg",  // JPEG Image
@@ -72,7 +58,7 @@ public class AppController {
     		    ".jfif"   // JPEG File Interchange Format (essentially a variant of JPEG)
     		);
     	
-    	List<String> videoFormats = Arrays.asList(
+    	videoFormats = Arrays.asList(
     		    ".mp4",    // MPEG-4 Part 14
     		    ".ogg",    // Ogg Theora
     		    ".webm",   // WebM
@@ -81,21 +67,25 @@ public class AppController {
     		    ".avi",    // AVI (supported in some browsers with limited compatibility)
     		    ".3gp"     // 3GPP (supported in most modern browsers)
     		);
-    	    List<String> tags = pSetup.sql.getTagsWithNoFamilyRelations().stream()
+    }
+	
+    @GetMapping("/")
+    public String func(Model model) {
+
+    	    List<String> tags = sql.getTagsWithNoFamilyRelations().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
             
             
-            List<String> allTags = pSetup.sql.getTags().stream()
+            List<String> allTags = sql.getTags().stream()
                     .map(tag -> Character.toUpperCase(tag.charAt(0)) + tag.substring(1).toLowerCase())
                     .collect(Collectors.toList());
             Collections.sort(tags);
-            
             
             if(mediaDivContainsPostRequest == false)
             {
-        	    mediaDivContent = getUncategorizedFiles();
+        	    mediaDivContent = fileSystem.getUncategorizedFiles();
             }
 
             showTags(model);
@@ -112,88 +102,8 @@ public class AppController {
     
     private void showTags(Model model) {
     	
-    	List<TagItem> tagItems = pSetup.sql.getTagHierarchy();
+    	List<TagItem> tagItems = sql.getTagHierarchy();
         model.addAttribute("items", tagItems);
-    }
-    
-    
-    
-    private List<String> getUncategorizedFiles(){
-   	    List<String> fileNames = new ArrayList<>();
-        File uncategorized = new File(absoluteUncategorizedLocation);
-
-        // Check if directory exists and is a directory
-        if (uncategorized.exists() && uncategorized.isDirectory()) {
-            File[] files = uncategorized.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) { // Only get files, not directories
-                        fileNames.add(uncategorizedLocation + file.getName().toLowerCase());
-                    }
-                }
-            }
-        }
-        Collections.shuffle(fileNames);
-        return fileNames;
-    }
-
-	private int getNextFreeFileName(String folderToCheck){
-		
-        File mediaFiles = new File(folderToCheck);
-        int highestFileName = 0;
-        int fileNameNumber = 0;
-        
-        // Check if directory exists and is a directory
-        if (mediaFiles.exists() && mediaFiles.isDirectory()) {
-            File[] files = mediaFiles.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    String fileName = file.getName();
-                	fileName = file.getName().substring(0, fileName.lastIndexOf('.')); // Includes the dot
-                    if (file.isFile()) { // Only get files, not directories
-                    	fileNameNumber = Integer.parseInt(fileName);
-                        if(highestFileName < fileNameNumber)
-                        {
-                        	highestFileName = fileNameNumber;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return highestFileName + 1;
-	}
-	
-	private String moveFileFromUncategorizedAndGetName(File file, String targetLocation) throws IOException {
-        // Check if file exists
-        if (!file.exists()) {
-            throw new IOException("File does not exist: " + file.getAbsolutePath());
-        }
-
-        // Extract the file extension
-        int nextFreeFileName = getNextFreeFileName(targetLocation);
-        String fileName = file.getName();
-        String fileExtension = "";
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-            fileExtension = fileName.substring(dotIndex); // Includes the dot
-        }
-
-        // Rename the file to 133713371337 with the original extension
-        String tempFileName = "13371337" + fileExtension;
-        Path tempFilePath = Paths.get(absoluteUncategorizedLocation, tempFileName);
-        Files.move(file.toPath(), tempFilePath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Move the renamed file to the new location
-        Path movedFilePath = Paths.get(targetLocation, tempFileName);
-        Files.move(tempFilePath, movedFilePath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Rename the file to the new name with the original extension
-        String finalFileName = nextFreeFileName + fileExtension;
-        Path finalFilePath = movedFilePath.resolveSibling(finalFileName);
-        Files.move(movedFilePath, finalFilePath, StandardCopyOption.REPLACE_EXISTING);
-        
-        return finalFileName;
     }
 	
     @GetMapping("/setup")
@@ -204,7 +114,7 @@ public class AppController {
     	
     	StringBuilder output = pSetup.setupDb();
     	
-    	output.append(pSetup.createProgramDirectories());
+    	output.append(fileSystem.createProgramDirectories());
     	
         return output.toString().replace("\n", "<br/>");
     }
@@ -215,20 +125,17 @@ public class AppController {
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
     	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
-    	String uncatMediaFileName = workingLocation + receivedMediaFileName;
+    	String uncatMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;
 
     	String newFileName;
     	try {
-			newFileName = moveFileFromUncategorizedAndGetName(new File(uncatMediaFileName), absoluteMediaFilesLocation);
+			newFileName = fileSystem.moveFileFromUncategorizedAndGetName(new File(uncatMediaFileName), fileSystem.getAbsoluteMediaFilesLocation());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
     	
-    	//System.out.println(tagRequest.getCurrentFileIndex());
-    	//System.out.println(tagRequest.getSelectedTags());
-    	//System.out.println(tagRequest.getFileLocation());
-    	pSetup.sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
+    	sql.addOrFindMediaFileAndAsignTagsToIt(newFileName, tagRequest.getSelectedTags());
         
         // Send a response
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
@@ -239,10 +146,10 @@ public class AppController {
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
     	//String uncatMediaFileName = receivedMediaFileName.substring(receivedMediaFileName.lastIndexOf('/'));
-    	String toDeleteMediaFileName = workingLocation + receivedMediaFileName;
+    	String toDeleteMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;
     	
     	try {
-			moveFileFromUncategorizedAndGetName(new File( toDeleteMediaFileName), absoluteDeletedFilesLocation);
+    		fileSystem.moveFileFromUncategorizedAndGetName(new File( toDeleteMediaFileName), fileSystem.getAbsoluteDeletedFilesLocation());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -260,9 +167,6 @@ public class AppController {
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
     
-    
-    
-    
     @PostMapping("/sendSearchTags")
     public String handleSearchPostRequest(@RequestBody TagSearchRequest tagSearchRequest, Model model) {
         // Print the raw JSON data
@@ -271,9 +175,9 @@ public class AppController {
     	List<String> res = tagSearchRequest.getSelectedTags();
     	if (!res.get(0).isBlank())
     	{
-    		List<String> files = pSetup.sql.getFilesByTags(res)
+    		List<String> files = sql.getFilesByTags(res)
     				.stream()
-    				.map(fName -> mediaLocation + fName)
+    				.map(fName -> fileSystem.getMediaLocation() + fName)
     				.collect(Collectors.toList());
     		
             Collections.shuffle(files);
