@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TagRequest  {
+public class TagsAssignRequest  {
 
     private List<String> selectedTags;
     private int currentFileIndex;
     private String fileLocation;
 
-    public TagRequest (List<String> selectedTags, int currentFileIndex, String fileLocation) {
+    public TagsAssignRequest (List<String> selectedTags, int currentFileIndex, String fileLocation) {
         this.selectedTags = selectedTags;
         this.currentFileIndex = currentFileIndex;
         this.fileLocation = fileLocation;

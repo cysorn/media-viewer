@@ -2,6 +2,7 @@ package media_viewer.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import media_viewer.ProgramSetup;
-import media_viewer.controller.mapping.TagRequest;
+import media_viewer.controller.mapping.TagsAssignRequest;
+import media_viewer.controller.mapping.ChildTagsAdditionRequest;
 import media_viewer.controller.mapping.TagSearchRequest;
+import media_viewer.controller.mapping.TagsAdditionRequest;
 import media_viewer.controller.mapping.UncategorizedDeleteRequest;
 import media_viewer.database.Sql;
 import media_viewer.file_system.FileSystem;
@@ -139,7 +142,7 @@ public class AppController {
     
     
     @PostMapping("/sendTags")
-    public ResponseEntity<String> handleTagsPostRequest(@RequestBody TagRequest tagRequest) {
+    public ResponseEntity<String> handleTagsPostRequest(@RequestBody TagsAssignRequest tagRequest) {
     	
     	String receivedMediaFileName = tagRequest.getFileLocation();
     	String uncatMediaFileName = fileSystem.getWorkingLocation() + receivedMediaFileName;
@@ -175,7 +178,7 @@ public class AppController {
     }
     
     @DeleteMapping("/deleteMediaFromGallery")
-    public ResponseEntity<String> handleGaleryDelete(@RequestBody TagRequest tagRequest) {
+    public ResponseEntity<String> handleGaleryDelete(@RequestBody TagsAssignRequest tagRequest) {
 
         return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
     }
@@ -200,5 +203,27 @@ public class AppController {
     	
     	return "index";
     	//return new ResponseEntity<>("JSON received successfully", HttpStatus.OK);
+    }
+    
+    @PostMapping("/addTags")
+    public ResponseEntity<String> addTags(@RequestBody TagsAdditionRequest tagsAdditionRequest){
+    	
+    	sql.extendTagsTableAndCreateFileTagsTablesIfNecessary(tagsAdditionRequest.getTags());
+    	
+    	return new ResponseEntity<>("Tags added succesfully.", HttpStatus.OK);
+    }
+    
+    @PostMapping("/addChildTags")
+    public ResponseEntity<String> addChildTags(@RequestBody ChildTagsAdditionRequest childTagsAdditionRequest){
+    	
+    	sql.asignChildTags(childTagsAdditionRequest.getTag(), childTagsAdditionRequest.getChildTags());
+    	
+    	return new ResponseEntity<>("Tags added succesfully.", HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/deleteTags")
+    public ResponseEntity<String> deleteTags(@RequestBody TagsAdditionRequest tagsToDelete){
+    	
+    	return new ResponseEntity<>("Tags deleted succesfully.", HttpStatus.OK);
     }
 }
