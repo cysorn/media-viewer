@@ -14,7 +14,7 @@ After years of saving images and videos, I wanted a way to organize my files eff
 
 ## Technologies
 - **Thymeleaf**: Dynamic HTML template engine.
-- **Spring Boot**: Handles REST requests and JSON.
+- **Spring**: Handles REST requests and JSON.
 - **MySQL**: Relational database system used for storing tags and file names.
 - **JDBC**: Java-to-database connector.
   
