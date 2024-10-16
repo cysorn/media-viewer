@@ -17,6 +17,3 @@ After years of saving images and videos, I wanted a way to organize my files eff
 - **Spring**: Handles REST requests and JSON.
 - **MySQL**: Relational database system used for storing tags and file names.
 - **JDBC**: Java-to-database connector.
-  
-## Functionality Demo
-![Preview](preview/preview.gif)
