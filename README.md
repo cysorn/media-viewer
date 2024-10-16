@@ -1,6 +1,6 @@
 # Media-Viewer 
 
-**Media-Viewer** is a program for managing videos and images in various formats. The program provides a simple way to organize media files locally without relying on complex folder structures. It includes a tag-based search engine, allowing users to quickly locate files even in large collections.
+**Media-Viewer** is a program for managing videos and images in various formats. The program provides a simple way to organize media files locally without relying on complex folder structures. It includes a tag-based search engine, allowing users to quickly locate files.
 
 ## Features 
 - View media files
