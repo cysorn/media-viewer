@@ -3,9 +3,9 @@
 This program provides a simple way to organize media files locally without relying on complex folder structures. It aims to offer the main benefits of modern media viewing platforms.
 
 ## Features 
-- View media files
 - Navigation between files with arrow keys
 - Adding tags and search by tags
+- View media files
 - Video rewind with hotkeys
 - Zoom in and out
 - Picture and video dragging
