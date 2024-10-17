@@ -28,23 +28,17 @@ public class Sql {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     
-    //Done after POST request
     private Integer addOrFindMediaFileAndGetId(String mediaFileName) {
-        // Check if the mediaFileName already exists
     	Integer existingId = null;
         try {
         	String checkSql = "SELECT id FROM `a_media_files` WHERE `fileName` = '" + mediaFileName + "'";
             existingId = jdbcTemplate.queryForObject(checkSql, Integer.class);
         } catch (EmptyResultDataAccessException e) {
-            // Handle the case where no existing ID is found
-            // This is expected when the fileName is not yet in the database
         }
 
         if (existingId != null) {
-            // Return the existing ID if the media file is already in the database
             return existingId;
         } else {
-            // Insert the new media file and return the new ID
             String insertSql = "INSERT INTO `a_media_files`(`fileName`) VALUES ('" + mediaFileName + "')";
             jdbcTemplate.update(insertSql);
 
@@ -53,25 +47,21 @@ public class Sql {
         }
     }
     
-    
-    //Executed after POST request
-    //THIS ASSUMES THAT extendTagsTableAndCreateFileTagsTables WAS ALREADY EXECUTED
+
+    //assumed that extendTagsTableAndCreateFileTagsTables is already executed
     @Transactional
     public void addOrFindMediaFileAndAsignTagsToIt(String mediaFileName, List<String> tags) {
-        // Remove duplicates from the list of tags
+        // Remove duplicates
         List<String> uniqueTags = new ArrayList<>(new HashSet<>(tags));
         
-        // Get the media file ID, adding it if necessary
         int mediaFileId = addOrFindMediaFileAndGetId(mediaFileName);
 
-        // Iterate through each tag
         for (String tag : uniqueTags) {
             try {
-                // Attempt to insert the new tag association, ignoring if it already exists
+                // insert the new tag association, ignoring if it already exists
                 String insertSql = "INSERT IGNORE INTO `files_tagged_" + tag + "`(`mediaFile`) VALUES (" + mediaFileId + ");";
                 jdbcTemplate.update(insertSql);
             } catch (DataIntegrityViolationException e) {
-                // Handle any integrity violations here, if necessary
             }
         }
     }
@@ -82,7 +72,6 @@ public class Sql {
     	
     	extendTagsTableAndCreateFileTagsTablesIfNecessary(uniqueChildren);
     	
-        // Build the SQL query
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT IGNORE INTO `media_viewer`.`a_child_tags` (`tag`, `childTag`) ")
            .append("SELECT (SELECT id FROM a_tags WHERE tag = '")
@@ -91,22 +80,19 @@ public class Sql {
            .append(String.join("', '", uniqueChildren))
            .append("');");
 
-        // Execute the final SQL query with a single jdbcTemplate call
         jdbcTemplate.update(sql.toString());
     }
     
     @Transactional
     public void extendTagsTableAndCreateFileTagsTablesIfNecessary(List<String> tags) {
-        // Remove duplicates from the input list by converting it to a Set and back to a List
+        // Remove duplicates
         List<String> uniqueTags = new ArrayList<>(new HashSet<>(tags));
 
      // Check if any of the tags exist in the a_tag_aliases table
         String sqlAliasCheck = "SELECT alias FROM media_viewer.a_tag_aliases WHERE alias IN (:tags)";
 
-        // Prepare the SQL parameters
         Map<String, Object> aliasParams = Map.of("tags", uniqueTags);
 
-        // Query the database for existing aliases
         List<String> existingAliases = namedParameterJdbcTemplate.queryForList(
             sqlAliasCheck, aliasParams, String.class);
 
@@ -119,17 +105,13 @@ public class Sql {
         // Construct the SQL query with a parameterized IN clause
         String sqlCheck = "SELECT tag FROM media_viewer.a_tags WHERE tag IN (:tags)";
         
-        // Prepare the SQL parameters
         Map<String, Object> params = Map.of("tags", uniqueTags);
 
-        // Query the database for existing tags
         List<String> existingTags = namedParameterJdbcTemplate.queryForList(
             sqlCheck, params, String.class);
 
-        // Remove the existing tags from the list of unique tags
         uniqueTags.removeAll(existingTags);
 
-        // Insert only the new tags and create associated tables
         for (String tag : uniqueTags) {
             String sql = "INSERT INTO `media_viewer`.`a_tags`(`tag`) VALUES ('" + tag + "');";
             jdbcTemplate.update(sql);
@@ -139,7 +121,6 @@ public class Sql {
     
     @Transactional
     public void addAliases(String tag, List<String> aliases) {
-        // Remove duplicates from the input list
         List<String> uniqueAliases = new ArrayList<>(new HashSet<>(aliases));
         
         String sqlAliasCheck = "SELECT tag FROM a_tags WHERE tag IN (" 
@@ -240,7 +221,7 @@ public class Sql {
 
 
     public List<TagItem> getTagHierarchy() {
-        // Query to get all tags and child tags
+        // get all tags and child tags
         String query = "SELECT t1.id AS parentId, t1.tag AS parentTag, t2.id AS childId, t2.tag AS childTag " +
                        "FROM a_tags t1 " +
                        "LEFT JOIN a_child_tags ct ON t1.id = ct.tag " +
@@ -295,8 +276,7 @@ public class Sql {
         return result;
     }
 	
-    //SETUP DB
-
+    //setup db
 	@Transactional
 	public void createDbStructureIfNecessary() {
 		//FIXME
