@@ -48,7 +48,6 @@ public class FileSystem {
 		Path folderPath = Paths.get(path);
 
         try {
-            // Create the directory
             Files.createDirectories(folderPath);
             return path + " is prepared!\n";
         } catch (IOException e) {
