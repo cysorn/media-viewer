@@ -88,7 +88,7 @@ public class Sql {
         // Remove duplicates
         List<String> uniqueTags = new ArrayList<>(new HashSet<>(tags));
 
-     // Check if any of the tags exist in the a_tag_aliases table
+        // Check if any of the tags exist in the a_tag_aliases table
         String sqlAliasCheck = "SELECT alias FROM media_viewer.a_tag_aliases WHERE alias IN (:tags)";
 
         Map<String, Object> aliasParams = Map.of("tags", uniqueTags);
