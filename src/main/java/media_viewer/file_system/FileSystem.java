@@ -78,7 +78,6 @@ public class FileSystem {
 
 	
 	public String moveFileFromUncategorizedAndGetName(File file, String targetLocation) throws IOException {
-        // Check if file exists
         if (!file.exists()) {
             throw new IOException("File does not exist: " + file.getAbsolutePath());
         }
@@ -89,15 +88,13 @@ public class FileSystem {
         String fileExtension = "";
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-            fileExtension = fileName.substring(dotIndex); // Includes the dot
+            fileExtension = fileName.substring(dotIndex);
         }
 
-        // Rename the file to 133713371337 with the original extension
         String tempFileName = "13371337" + fileExtension;
         Path tempFilePath = Paths.get(absoluteUncategorizedLocation, tempFileName);
         Files.move(file.toPath(), tempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Move the renamed file to the new location
         Path movedFilePath = Paths.get(targetLocation, tempFileName);
         Files.move(tempFilePath, movedFilePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -116,7 +113,6 @@ public class FileSystem {
 		int highestFileName = 0;
 		int fileNameNumber = 0;
 		
-		// Check if directory exists and is a directory
 		if (mediaFiles.exists() && mediaFiles.isDirectory()) {
 			File[] files = mediaFiles.listFiles();
 			if (files != null) {
