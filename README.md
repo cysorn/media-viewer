@@ -10,5 +10,5 @@ This program provides a simple way to organize media files locally without relyi
 ## Technologies
 - **Thymeleaf**: Dynamic HTML template engine.
 - **Spring**: Handles REST requests and JSON.
-- **MySQL**: Relational database system used for storing tags and file names.
+- **MySQL**: Database for storing tags and file names.
 - **JDBC**: Java-to-database connector.
