@@ -124,7 +124,6 @@ function initializeMediaListeners() {
     });
 }
 
-// Initialize media listeners on load
 initializeMediaListeners();
 
 // Add overlay click event listener
@@ -215,11 +214,11 @@ function calculateDelta(scale) {
 
 // Handle zoom functionality
 function handleZoom(event) {
-    event.preventDefault(); // Prevent default scroll behavior
+    event.preventDefault();
 
     // Check if the mouse is not over the tagsManagementContainer
     if (!tagsManagementContainer.contains(event.target)) {
-        const zoomSpeed = calculateDelta(scale); // Calculate zoom speed based on current scale
+        const zoomSpeed = calculateDelta(scale);
         const delta = event.deltaY < 0 ? zoomSpeed : -zoomSpeed; // Zoom in if scroll up, out if scroll down
 
         scale += delta;
@@ -270,7 +269,7 @@ prevArrow.addEventListener('click', () => {
 });
 
 function navigateMedia(direction) {
-    const mediaElements = getMediaElements(); // Get updated media elements
+    const mediaElements = getMediaElements();
     currentIndex = (currentIndex + direction + mediaElements.length) % mediaElements.length;
     toggleFullscreen(); // Exit current fullscreen
     const newElement = mediaElements[currentIndex];
@@ -353,7 +352,7 @@ function onMouseUp() {
     startFocusInterval();
 }
 
-// Add event listeners
+
 document.addEventListener('mousedown', onMouseDown);
 document.addEventListener('mousemove', onMouseMove);
 document.addEventListener('mouseup', onMouseUp);
@@ -368,10 +367,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	const searchButton = document.getElementById('searchButton');
 	
 	function setAllVideosToLoop() {
-	    // Get all media elements from the container
 	    const mediaElements = getMediaElements();
 
-	    // Iterate through each media element
 	    mediaElements.forEach(element => {
 	        if (element.tagName === 'VIDEO') {
 	            element.loop = true;  // Set the video to loop
@@ -380,14 +377,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	setAllVideosToLoop();
 	
-	// Select all tag items
 	        const tagItems = document.querySelectorAll('.tag-item');
 	        // Add click event listener to each tag item
 	        tagItems.forEach(tag => {
 	            tag.addEventListener('click', function() {
-	                // Get the text of the clicked tag
 	                const tagText = this.textContent;
-	                // Append the tag text followed by a space to the current value of the search bar
 	                searchBar.value += tagText + ' ';
 	            });
 	        });
@@ -403,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			                this.classList.add('selected');
 			            }
 
-			            // Toggle visibility of child buttons, if any
 			            const childButtons = this.nextElementSibling;
 			            if (childButtons && childButtons.classList.contains('child-buttons')) {
 			                childButtons.style.display = 

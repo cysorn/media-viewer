@@ -6,12 +6,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Top container with title -->
     <div class="top-container">
         <h1 class="top-title">Media-Viewer</h1>
     </div>
-
-    <!-- Left container with search and tags -->
     <div class="side-container">
 		<input type="text" class="search-bar" placeholder="Search...">
 		<button id="searchButton" class="search-button">Search</button>
@@ -26,13 +23,11 @@
 	</script>
 
 	<div class="container">
-	        <!-- Loop through each media item in the list -->
 	        <div th:each="media : ${mediaList}">
 				<!-- Check if the media is an image -->
 				<th:block th:if="${media != null and imageFormats != null and #lists.contains(imageFormats, #strings.substring(media, media.lastIndexOf('.')))}">
 				    <img th:src="@{${media}}" alt="Image" width="150" height="150"  loading="lazy"/>
 				</th:block>
-
 				<!-- Check if the media is a video -->
 				<th:block th:if="${media != null and videoFormats != null and #lists.contains(videoFormats, #strings.substring(media, media.lastIndexOf('.')))}">
 				    <video width="150" height="150" controls  loading="lazy">
@@ -58,7 +53,6 @@
 			    <button th:each="tag : ${tags}" class="tag-button" th:text="${tag}"></button>
 			</div>
         </div>
-		<!-- Wrapper for the fixed confirm button -->
 		<div class="confirm-button-wrapper">
 		    <button id="deleteButton" class="delete-button">D</button>
 		    <button id="confirmButton" class="confirm-button">Confirm</button>
