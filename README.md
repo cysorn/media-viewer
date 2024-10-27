@@ -1,6 +1,6 @@
 # Media-Viewer 
 
-This program provides a simple way to organize media files locally without relying on complex folder structures. It aims to offer the benefits of modern media viewing platforms.
+This program provides a simple way to organize media files locally without relying on complex folder structures. It aims to provide the benefits of modern media viewing platforms.
 
 ## Features 
 - Add tags and search by tags
